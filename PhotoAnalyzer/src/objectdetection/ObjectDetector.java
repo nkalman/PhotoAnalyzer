@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -41,6 +40,7 @@ import static org.opencv.imgproc.Imgproc.RETR_EXTERNAL;
  */
 public class ObjectDetector {
     private Mat img;
+    private Mat imgOut;
     private Mat imgMeanShifted;
     private Mat imgGrayscale;
     private Mat imgCanny;
@@ -51,6 +51,7 @@ public class ObjectDetector {
     
     public ObjectDetector(String fileName) {
         img = Imgcodecs.imread(fileName);
+        imgOut = Imgcodecs.imread(fileName);
         contours = new ArrayList();
         imgMeanShifted = new Mat();
         imgGrayscale = new Mat();
@@ -79,21 +80,33 @@ public class ObjectDetector {
     public BufferedImage getMRgba() {
         return mat2BufferedImage(img); 
     }
+    public BufferedImage getImgOut() {
+        return mat2BufferedImage(imgOut); 
+    }
     
     public void preProcessImg() {
         TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
         Imgproc.pyrMeanShiftFiltering(img, imgMeanShifted, SPATIAL_WINDOW_RADIUS,
                 COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
         
-        Imgproc.cvtColor(imgMeanShifted, imgGrayscale, COLOR_BGR2GRAY);
-        Imgproc.Canny(imgGrayscale, imgCanny, THRESHOLD1, 
+        //Imgproc.cvtColor(imgMeanShifted, imgGrayscale, COLOR_BGR2GRAY);
+//        Imgproc.Canny(imgMeanShifted, imgCanny, THRESHOLD1, 
+//                THRESHOLD2, APERTURE_SIZE, true); 
+    }
+    
+    public void toGrayScale(Mat m) {
+        Imgproc.cvtColor(m, imgGrayscale, COLOR_BGR2GRAY);
+    }
+    
+    public void detectEdges(Mat m) {
+        Imgproc.Canny(m, imgCanny, THRESHOLD1, 
                 THRESHOLD2, APERTURE_SIZE, true); 
     }
     
     public void findObjects() {
-        
-        
+
         preProcessImg();
+        detectEdges(imgMeanShifted);
         Imgproc.findContours(imgCanny, contours, imgCanny, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         
         for ( MatOfPoint mop : contours) {
@@ -101,7 +114,7 @@ public class ObjectDetector {
             m2p = new MatOfPoint2f( mop.toArray() );
             Double peri = Imgproc.arcLength(m2p, true);
             Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
-            //Imgproc.drawContours(img, contours, -1, new Scalar(0, 0, 255), 2);
+            Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
             
             
             
@@ -109,9 +122,32 @@ public class ObjectDetector {
             Rect rect = Imgproc.boundingRect(mop);
             objList.add(rect);
             //if (rect.height * rect.width > area*5/100) {
-                Imgproc.rectangle(img, rect.tl(), rect.br(), new Scalar(255, 0, 0));
+                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 255));
             //}
         }
+
+        toGrayScale(imgMeanShifted);
+        detectEdges(imgGrayscale);
+        Imgproc.findContours(imgCanny, contours, imgCanny, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        objList = new ArrayList();
+        
+        for ( MatOfPoint mop : contours) {
+            MatOfPoint2f m2p;
+            m2p = new MatOfPoint2f( mop.toArray() );
+            Double peri = Imgproc.arcLength(m2p, true);
+            Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
+            Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
+            
+            
+            
+            float area = img.width() * img.height();
+            Rect rect = Imgproc.boundingRect(mop);
+            objList.add(rect);
+            //if (rect.height * rect.width > area*5/100) {
+                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 0));
+            //}
+        }
+        
         Collections.sort(objList, new Comparator<Rect>() {
             @Override public int compare(Rect r1, Rect r2) {
                 return (int)(r2.area() - r1.area());
@@ -122,7 +158,7 @@ public class ObjectDetector {
         List<Rect> arr = objList;
         
         Rect bigRect = arr.get(0);
-        Rect bigRect2 = arr.get(1);
+        Rect bigRect2 = new Rect();
         
         while(!equals(bigRect, bigRect2)) {
             bigRect2 = bigRect;
@@ -136,7 +172,7 @@ public class ObjectDetector {
             
         }
         
-        Imgproc.rectangle(img, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
+        Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
         mainRect = bigRect;
     }
     
