@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -85,17 +86,20 @@ public class ObjectDetector {
     }
     
     public void preProcessImg() {
+        
+        
         TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
         Imgproc.pyrMeanShiftFiltering(img, imgMeanShifted, SPATIAL_WINDOW_RADIUS,
                 COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
         
-        //Imgproc.cvtColor(imgMeanShifted, imgGrayscale, COLOR_BGR2GRAY);
-//        Imgproc.Canny(imgMeanShifted, imgCanny, THRESHOLD1, 
-//                THRESHOLD2, APERTURE_SIZE, true); 
+
     }
     
     public void toGrayScale(Mat m) {
         Imgproc.cvtColor(m, imgGrayscale, COLOR_BGR2GRAY);
+        Imgproc.adaptiveThreshold(imgGrayscale, imgGrayscale, 255,
+         Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY_INV, 15, 4);
+  
     }
     
     public void detectEdges(Mat m) {
@@ -106,25 +110,25 @@ public class ObjectDetector {
     public void findObjects() {
 
         preProcessImg();
-        detectEdges(imgMeanShifted);
-        Imgproc.findContours(imgCanny, contours, imgCanny, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-        
-        for ( MatOfPoint mop : contours) {
-            MatOfPoint2f m2p;
-            m2p = new MatOfPoint2f( mop.toArray() );
-            Double peri = Imgproc.arcLength(m2p, true);
-            Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
-            Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
-            
-            
-            
-            float area = img.width() * img.height();
-            Rect rect = Imgproc.boundingRect(mop);
-            objList.add(rect);
-            //if (rect.height * rect.width > area*5/100) {
-                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 255));
-            //}
-        }
+//        detectEdges(imgMeanShifted);
+//        Imgproc.findContours(imgCanny, contours, imgCanny, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+//        
+//        for ( MatOfPoint mop : contours) {
+//            MatOfPoint2f m2p;
+//            m2p = new MatOfPoint2f( mop.toArray() );
+//            Double peri = Imgproc.arcLength(m2p, true);
+//            Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
+//            Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
+//            
+//            
+//            
+//            float area = img.width() * img.height();
+//            Rect rect = Imgproc.boundingRect(mop);
+//            objList.add(rect);
+//            //if (rect.height * rect.width > area*5/100) {
+//                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 255));
+//            //}
+//        }
 
         toGrayScale(imgMeanShifted);
         detectEdges(imgGrayscale);
