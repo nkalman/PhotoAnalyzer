@@ -14,7 +14,6 @@ import static analyzer.Constants.SPATIAL_WINDOW_RADIUS;
 import static analyzer.Constants.THRESHOLD1;
 import static analyzer.Constants.THRESHOLD2;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,27 +62,24 @@ public class ObjectDetector {
         mRgba = new Mat();
     }
     
-    public BufferedImage getImg() {
-        return mat2BufferedImage(img); 
+    public Mat getImg() {
+        return img; 
     }
     
-    public BufferedImage getImgMeanShifted() {
-        return mat2BufferedImage(imgMeanShifted); 
+    public Mat getImgMeanShifted() {
+        return imgMeanShifted; 
     }
     
-    public BufferedImage getImgGrayscale() {
-        return mat2BufferedImage(imgGrayscale); 
+    public Mat getImgGrayscale() {
+        return imgGrayscale; 
     }
     
-    public BufferedImage getImgCanny() {
-        return mat2BufferedImage(imgGrayscale); 
+    public Mat getImgCanny() {
+        return imgGrayscale; 
     }
-    
-    public BufferedImage getMRgba() {
-        return mat2BufferedImage(img); 
-    }
-    public BufferedImage getImgOut() {
-        return mat2BufferedImage(imgOut); 
+
+    public Mat getImgOut() {
+        return imgOut; 
     }
     
     public List<Rect> getMainObjects() {
@@ -226,21 +222,6 @@ public class ObjectDetector {
 
         Rect union = Imgproc.boundingRect(mof);
         return union;
-    }
-    
-    public BufferedImage mat2BufferedImage(Mat m){
-        int type = BufferedImage.TYPE_BYTE_GRAY;
-        if ( m.channels() > 1 ) {
-            type = BufferedImage.TYPE_3BYTE_BGR;
-        }
-        int bufferSize = m.channels()*m.cols()*m.rows();
-        byte [] b = new byte[bufferSize];
-        m.get(0,0,b); // get all the pixels
-        BufferedImage image = new BufferedImage(m.cols(),m.rows(), type);
-        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        System.arraycopy(b, 0, targetPixels, 0, b.length);  
-        return image;
-
     }
     
     public List<Rect> getObjList() {

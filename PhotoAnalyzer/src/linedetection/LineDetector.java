@@ -32,19 +32,19 @@ public class LineDetector {
         lineList = new ArrayList();
     }
     
-    public BufferedImage getImg() {
-        return mat2BufferedImage(img);
+    public Mat getImg() {
+        return img;
     }
     
-    public BufferedImage getEdgeDetectedImg() {
-        return mat2BufferedImage(edgeDetectedImg);
+    public Mat getEdgeDetectedImg() {
+        return edgeDetectedImg;
     }
     
     public List<Line> getLineList() {
         return lineList;
     }
     
-    public void detectLines() {
+    public void findLines() {
 //        TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
 //        Imgproc.pyrMeanShiftFiltering(img, img, SPATIAL_WINDOW_RADIUS,
 //                COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
@@ -105,25 +105,7 @@ public class LineDetector {
 
                Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 1);
             }
-        }
-        
-        
+        }    
     }
-    
-    public BufferedImage mat2BufferedImage(Mat m){
-        int type = BufferedImage.TYPE_BYTE_GRAY;
-        if ( m.channels() > 1 ) {
-            type = BufferedImage.TYPE_3BYTE_BGR;
-        }
-        int bufferSize = m.channels()*m.cols()*m.rows();
-        byte [] b = new byte[bufferSize];
-        m.get(0,0,b); // get all the pixels
-        BufferedImage image = new BufferedImage(m.cols(),m.rows(), type);
-        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        System.arraycopy(b, 0, targetPixels, 0, b.length);  
-        return image;
-
-    }
-    
     
 }
