@@ -47,6 +47,7 @@ public class ObjectDetector {
     private Mat imgCanny;
     private List<MatOfPoint> contours;
     private List<Rect> objList;
+    private List<Rect> mainObjects;
     private Rect mainRect;
     private Mat mRgba;
     
@@ -58,6 +59,7 @@ public class ObjectDetector {
         imgGrayscale = new Mat();
         imgCanny = new Mat();
         objList = new ArrayList();
+        mainObjects = new ArrayList();
         mainRect = null;
         mRgba = new Mat();
     }
@@ -161,23 +163,31 @@ public class ObjectDetector {
         
         List<Rect> arr = objList;
         
-        Rect bigRect = arr.get(0);
-        Rect bigRect2 = new Rect();
-        
-        while(!equals(bigRect, bigRect2)) {
-            bigRect2 = bigRect;
-            for (int i=1; i < arr.size(); ++i) {
-                if (doOverlap(bigRect, arr.get(i))) {
-                    bigRect = union(bigRect, arr.get(i));
-                    arr.remove(i);
-                    break;
+        while (arr.size() > 0) {
+            //System.out.println("---->" + arr);
+            Rect bigRect = arr.get(0);
+            arr.remove(0);
+            Rect bigRect2 = new Rect();
+
+            while(!equals(bigRect, bigRect2)) {
+                bigRect2 = bigRect;
+                for (int i=0; i < arr.size(); ++i) {
+                   // System.out.println("elotte"+arr.get(i));
+                    if (doOverlap(bigRect, arr.get(i))) {
+                        //System.out.println("utana"+arr.get(i));
+                        bigRect = union(bigRect, arr.get(i));
+                        arr.remove(i);
+                        break;
+                    }
                 }
+
             }
-            
+
+            Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
+            mainRect = bigRect;
+            mainObjects.add(mainRect);
         }
         
-        Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
-        mainRect = bigRect;
     }
     
     public boolean doOverlap(Rect r1, Rect r2)

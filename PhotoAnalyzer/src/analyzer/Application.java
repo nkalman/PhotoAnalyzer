@@ -23,24 +23,24 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\man.jpg";
-//        ObjectDetector objDet = new ObjectDetector(filename);
-//        objDet.findObjects();
-//        
-//        showImage(objDet.getImg());
-//        showImage(objDet.getImgMeanShifted());
-//        showImage(objDet.getImgGrayscale());
-//        showImage(objDet.getImgOut());
+        String filename = "D:\\1Downloads\\Firefox downloads\\trees.jpg";
+        ObjectDetector objDet = new ObjectDetector(filename);
+        objDet.findObjects();
+        
+        showImage(objDet.getImg());
+        showImage(objDet.getImgMeanShifted());
+        showImage(objDet.getImgGrayscale());
+        showImage(objDet.getImgOut());
 //
 //        FaceDetector faceDet = new FaceDetector(filename);
 //        faceDet.findFaces();
 //        showImage(faceDet.getImg());
 
 
-        LineDetector lineDet = new LineDetector(filename);
-        lineDet.detectLines();
-        showImage(lineDet.getDst());
-        showImage(lineDet.getImg());
+//        LineDetector lineDet = new LineDetector(filename);
+//        lineDet.detectLines();
+//        showImage(lineDet.getDst());
+//        showImage(lineDet.getImg());
     }
     
     
