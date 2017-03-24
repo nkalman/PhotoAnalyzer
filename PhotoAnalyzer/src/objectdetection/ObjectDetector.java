@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -85,6 +84,10 @@ public class ObjectDetector {
     }
     public BufferedImage getImgOut() {
         return mat2BufferedImage(imgOut); 
+    }
+    
+    public List<Rect> getMainObjects() {
+        return mainObjects; 
     }
     
     public void preProcessImg() {

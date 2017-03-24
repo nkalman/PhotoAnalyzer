@@ -23,7 +23,7 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\trees.jpg";
+        String filename = "D:\\1Downloads\\Firefox downloads\\billiard.jpg";
         ObjectDetector objDet = new ObjectDetector(filename);
         objDet.findObjects();
         
@@ -39,7 +39,7 @@ public class Application {
 
 //        LineDetector lineDet = new LineDetector(filename);
 //        lineDet.detectLines();
-//        showImage(lineDet.getDst());
+//        showImage(lineDet.getEdgeDetectedImg());
 //        showImage(lineDet.getImg());
     }
     

@@ -36,23 +36,22 @@ public class FaceDetector {
         return mat2BufferedImage(img); 
     }
     
+    public List<Rect> getFaceList() {
+        return faceList;
+    }
+    
     public void findFaces() {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         CascadeClassifier faceDetector = new CascadeClassifier("D:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml");
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(img, faceDetections);
- 
-        System.out.println(faceDetections);
- 
+        
         for (Rect rect : faceDetections.toArray()) {
             faceList.add(rect);
-            Imgproc.rectangle(img, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
+            Imgproc.rectangle(img, new Point(rect.x, rect.y), 
+                    new Point(rect.x + rect.width, rect.y + rect.height),
                     new Scalar(0, 255, 0));
         }
-    }
-    
-    public List<Rect> getFaceList() {
-        return faceList;
     }
     
     public BufferedImage mat2BufferedImage(Mat m){
