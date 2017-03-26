@@ -5,8 +5,6 @@
  */
 package linedetection;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,19 +43,9 @@ public class LineDetector {
     }
     
     public void findLines() {
-//        TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
-//        Imgproc.pyrMeanShiftFiltering(img, img, SPATIAL_WINDOW_RADIUS,
-//                COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
         Imgproc.Canny(img, edgeDetectedImg, 100, 200, 3, true); 
         Mat lines = new Mat();
-//        Imgproc.HoughLines(dst, lines, 1, Math.PI/180, 4);
 
-
-//        int threshold = 50;
-//        int minLineSize = 20;
-//        int lineGap = 20;
-    
-//        Imgproc.HoughLinesP(img, lines, EPS, EPS, threshold, minLineSize, lineGap);
         int width = img.width();
         int height = img.height();
         double diagonal = Math.sqrt(width*width + height*height);
@@ -65,7 +53,7 @@ public class LineDetector {
         
         Imgproc.HoughLinesP(edgeDetectedImg, lines, 1, Math.PI/180, minOfWidthHeight*10/100, diagonal*25/100, diagonal*4/100);
 
-        int l = (lines.rows() < 3)?lines.rows():3;
+        int firstN = (lines.rows() < 3)?lines.rows():3;
 
         for (int x = 0; x < lines.rows(); x++) {
             double[] vec = lines.get(x,0 );
@@ -94,8 +82,8 @@ public class LineDetector {
         System.out.println(lineList);
            
            
-        for (int i=0; i<l+1; i++) {
-            if (lineList.size() >= l+1) {
+        for (int i=0; i<firstN+1; i++) {
+            if (lineList.size() >= firstN+1) {
                double x1 = lineList.get(i).getX1(), 
                       y1 = lineList.get(i).getY1(),
                       x2 = lineList.get(i).getX2(),
