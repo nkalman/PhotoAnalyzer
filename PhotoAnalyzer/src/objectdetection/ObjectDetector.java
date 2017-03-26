@@ -10,10 +10,8 @@ import static analyzer.Constants.COLOR_WINDOW_RADIUS;
 import static analyzer.Constants.COUNT_VALUE;
 import static analyzer.Constants.EPS_VALUE;
 import static analyzer.Constants.MAX_LEVEL;
-import static analyzer.Constants.SPATIAL_WINDOW_RADIUS;
 import static analyzer.Constants.THRESHOLD1;
 import static analyzer.Constants.THRESHOLD2;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,13 +85,13 @@ public class ObjectDetector {
     }
     
     public void preProcessImg() {
-        
-        
-        TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
-        Imgproc.pyrMeanShiftFiltering(img, imgMeanShifted, SPATIAL_WINDOW_RADIUS,
-                COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
-        
 
+        int spatialWindowRadius = ((img.width() + img.height() ) / 2);
+        spatialWindowRadius = spatialWindowRadius * 3/100;
+        System.out.println(spatialWindowRadius);
+        TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
+        Imgproc.pyrMeanShiftFiltering(img, imgMeanShifted, spatialWindowRadius,
+                COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);
     }
     
     public void toGrayScale(Mat m) {
@@ -111,25 +109,6 @@ public class ObjectDetector {
     public void findObjects() {
 
         preProcessImg();
-//        detectEdges(imgMeanShifted);
-//        Imgproc.findContours(imgCanny, contours, imgCanny, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-//        
-//        for ( MatOfPoint mop : contours) {
-//            MatOfPoint2f m2p;
-//            m2p = new MatOfPoint2f( mop.toArray() );
-//            Double peri = Imgproc.arcLength(m2p, true);
-//            Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
-//            Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
-//            
-//            
-//            
-//            float area = img.width() * img.height();
-//            Rect rect = Imgproc.boundingRect(mop);
-//            objList.add(rect);
-//            //if (rect.height * rect.width > area*5/100) {
-//                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 255));
-//            //}
-//        }
 
         toGrayScale(imgMeanShifted);
         detectEdges(imgGrayscale);
@@ -148,9 +127,7 @@ public class ObjectDetector {
             float area = img.width() * img.height();
             Rect rect = Imgproc.boundingRect(mop);
             objList.add(rect);
-            //if (rect.height * rect.width > area*5/100) {
-                Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 0));
-            //}
+            Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 0));
         }
         
         Collections.sort(objList, new Comparator<Rect>() {

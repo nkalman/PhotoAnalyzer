@@ -23,24 +23,7 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\group.jpg";
-//        ObjectDetector objDet = new ObjectDetector(filename);
-//        objDet.findObjects();
-//        
-//        showImage(objDet.getImg());
-//        showImage(objDet.getImgMeanShifted());
-//        showImage(objDet.getImgGrayscale());
-//        showImage(objDet.getImgOut());
-//
-//        FaceDetector faceDet = new FaceDetector(filename);
-//        faceDet.findFaces();
-//        showImage(faceDet.getImg());
-
-
-//        LineDetector lineDet = new LineDetector(filename);
-//        lineDet.detectLines();
-//        showImage(lineDet.getEdgeDetectedImg());
-//        showImage(lineDet.getImg());
+        String filename = "D:\\1Downloads\\Firefox downloads\\stock.jpg";
 
         new Analyzer(filename);
     }
