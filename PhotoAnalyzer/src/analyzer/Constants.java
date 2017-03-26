@@ -14,12 +14,17 @@ public class Constants {
     public static final int COUNT_VALUE = 5;
     public static final int EPS_VALUE = 1;
     //pyrMeanShiftFiltering parameters
-    //public static final int SPATIAL_WINDOW_RADIUS = 30;
+//    public static final int SPATIAL_WINDOW_RADIUS = 30;
     public static final int COLOR_WINDOW_RADIUS = 100;
     public static final int MAX_LEVEL = 2;
     
+    //adaptiveThreshold parameters
+    public static final int MAX_VALUE = 255;
+    public static final int BLOCK_SIZE = 15;
+    public static final int CONSTANT_OF_MEAN = 4;
+    
     //canny parametes
-    public static final int THRESHOLD1 = 50;
+    public static final int THRESHOLD1 = 120;
     public static final int THRESHOLD2 = 250;
     public static final int APERTURE_SIZE = 3;
 }

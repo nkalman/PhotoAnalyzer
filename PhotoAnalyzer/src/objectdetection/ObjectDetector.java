@@ -6,10 +6,13 @@
 package objectdetection;
 
 import static analyzer.Constants.APERTURE_SIZE;
+import static analyzer.Constants.BLOCK_SIZE;
 import static analyzer.Constants.COLOR_WINDOW_RADIUS;
+import static analyzer.Constants.CONSTANT_OF_MEAN;
 import static analyzer.Constants.COUNT_VALUE;
 import static analyzer.Constants.EPS_VALUE;
 import static analyzer.Constants.MAX_LEVEL;
+import static analyzer.Constants.MAX_VALUE;
 import static analyzer.Constants.THRESHOLD1;
 import static analyzer.Constants.THRESHOLD2;
 import java.util.ArrayList;
@@ -27,9 +30,11 @@ import static org.opencv.core.TermCriteria.COUNT;
 import static org.opencv.core.TermCriteria.EPS;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import static org.opencv.imgproc.Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C;
 import static org.opencv.imgproc.Imgproc.CHAIN_APPROX_SIMPLE;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.RETR_EXTERNAL;
+import static org.opencv.imgproc.Imgproc.THRESH_BINARY_INV;
 
 /**
  *
@@ -96,8 +101,8 @@ public class ObjectDetector {
     
     public void toGrayScale(Mat m) {
         Imgproc.cvtColor(m, imgGrayscale, COLOR_BGR2GRAY);
-        Imgproc.adaptiveThreshold(imgGrayscale, imgGrayscale, 255,
-         Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY_INV, 15, 4);
+        Imgproc.adaptiveThreshold(imgGrayscale, imgGrayscale, MAX_VALUE,
+        ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, BLOCK_SIZE, CONSTANT_OF_MEAN);
   
     }
     
