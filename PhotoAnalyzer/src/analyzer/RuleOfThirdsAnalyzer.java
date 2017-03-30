@@ -32,9 +32,9 @@ public class RuleOfThirdsAnalyzer {
     private List<Line> lineList;
     
     //metric variables
-    private double sumOfMass;
     
     private List<Point> powerPoints;
+    private List<Line> thirdLines;
     
     public RuleOfThirdsAnalyzer(Mat image, List<Rect> oList, List<Rect> fList, List<Line> lList) {
         img = image;
@@ -42,14 +42,17 @@ public class RuleOfThirdsAnalyzer {
         faceList = fList;
         lineList = lList;
         
-        sumOfMass = 0 ;
         powerPoints = new ArrayList();
-        calculatePowerPoints();
-        System.out.println(calcEPoint());
+        thirdLines = new ArrayList();
+        calculatePowerPoints();    
+        calculateThirdLines();
+        
+        System.out.println(calcERuleOfThirds());
     }
     
     public double calcSumOfMass() {
         double imgArea = img.width() * img.height();
+        double sumOfMass = 0;
         for (Rect rect : objectList) {
             sumOfMass += rect.area();
         }
@@ -70,9 +73,6 @@ public class RuleOfThirdsAnalyzer {
     
     private double minDistToPowerPoints(Rect rect) {
         Point center = new Point(rect.x + (rect.width - 1) / 2, rect.y + (rect.height - 1) / 2);
-        Imgproc.drawMarker(img, center, new Scalar(255,0,0));
-        Imgproc.rectangle(img, rect.tl(), rect.br(), new Scalar(255, 0, 0));
-        showImage(mat2BufferedImage(img));
         double min = 100000000;
         double actualDist = 0;
         for (Point p : powerPoints) {
@@ -81,7 +81,6 @@ public class RuleOfThirdsAnalyzer {
                 min = actualDist;
             }
         }
-        System.out.println(min);
         return min;
     }
     
@@ -92,15 +91,110 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private double calcEPoint() {
-        double ePoint = calcSumOfMass();
-        double sum = 0;
-        for (Rect rect : objectList) {
-            sum = sum +  (rect.area() * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
+        if (objectList.size() + faceList.size() > 0) {
+            double ePoint = calcSumOfMass();
+            double sum = 0;
+            for (Rect rect : objectList) {
+                sum = sum +  (rect.area() * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
+            }
+            for (Rect rect : faceList) {
+                sum = sum +  (rect.area()* 3/100 * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
+            }
+            System.out.println("\n" + "epoint: " + 1/ePoint * sum);
+            return (1/ePoint * sum);
         }
-        for (Rect rect : faceList) {
-            sum = sum +  (rect.area()* 3/100 * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
+        else {
+            return 0;
         }
-        return (1/ePoint * sum);
+    }
+    
+    private void calculateThirdLines() {
+        int width = img.width() - 1;
+        int height = img.height() - 1;
+        thirdLines.add(new Line(width/3, 0, width/3, height));
+        thirdLines.add(new Line(2*width/3, 0, 2*width/3, height));
+        thirdLines.add(new Line(0, height/3, width, height/3));
+        thirdLines.add(new Line(0, 2*height/3, width, 2*height/3));  
+    }
+    
+    private double minDistToThirdLines(Line line) {
+        int width = img.width() - 1;
+        int height = img.height() - 1;
+        Point p1 = new Point(line.getX1(), line.getY1());
+        Point p2 = new Point(line.getX2(), line.getY2());
+        
+        ArrayList<Double> distances = new ArrayList();
+        double dist = 0;
+        dist = distanceBtwPoints(p1, new Point(width/3, p1.y));
+        dist += distanceBtwPoints(p2, new Point(width/3, p2.y));
+        dist = dist / 2;
+                distances.add(dist);
+//        System.out.println(dist);
+//        Imgproc.line(img, p1,new Point(width/3, p1.y), new Scalar(255,0,0), 1);
+//        Imgproc.line(img, p2,new Point(width/3, p2.y), new Scalar(255,0,0), 1);
+        
+        dist = 0;
+        dist = distanceBtwPoints(p1, new Point(p1.x, height/3));
+        dist += distanceBtwPoints(p2, new Point(p2.x, height/3));
+        dist = dist / 2;
+        distances.add(dist);
+//        System.out.println(dist);
+//        Imgproc.line(img, p1,new Point(p1.x, height/3), new Scalar(0,255,0), 1);
+//        Imgproc.line(img, p2,new Point(p2.x, height/3), new Scalar(0,255,0), 1);
+        
+        dist = 0;
+        dist = distanceBtwPoints(p1, new Point(2*width/3, p1.y));
+        dist += distanceBtwPoints(p2, new Point(2*width/3, p2.y));
+        dist = dist / 2;
+        distances.add(dist);
+//        System.out.println(dist);
+//        Imgproc.line(img, p1,new Point(2*width/3, p1.y), new Scalar(0,0,255), 1);
+//        Imgproc.line(img, p2,new Point(2*width/3, p2.y), new Scalar(0,0,255), 1);
+        
+        dist = 0;
+        dist = distanceBtwPoints(p1, new Point(p1.x, 2*height/3));
+        dist += distanceBtwPoints(p2, new Point(p2.x, 2*height/3));
+        dist = dist / 2;
+        distances.add(dist);
+//        System.out.println(dist);
+//        Imgproc.line(img, p1,new Point(p1.x, 2*height/3), new Scalar(255,255,0), 1);
+//        Imgproc.line(img, p2,new Point(p2.x, 2*height/3), new Scalar(255,255,0), 1);
+        
+        double min = distances.get(0);
+        for (int i = 1; i < distances.size(); ++i) {
+            if (distances.get(i) < min) {
+                min = distances.get(i);
+            }
+        }
+//        showImage(mat2BufferedImage(img));
+        return min;
+    }
+    
+    private double calcSumOfLines() {
+        double sumOfLines = 0;
+        for (Line line : lineList) {
+            sumOfLines += line.getLength();
+        }
+        return sumOfLines;
+    }
+    
+    private double calcELine() {
+        if (lineList.size() > 0) {
+            double eLine = calcSumOfLines();
+            double sum = 0;
+            for (Line line : lineList) {
+                sum = sum +  (line.getLength() * Math.exp((-1 * Math.pow(minDistToThirdLines(line), 2)) / (2 * 0.17)));
+            }
+            System.out.println("eline: " + 1/eLine * sum);
+            return (1/eLine * sum);
+        }
+        else {
+            return 0;
+        }
+    }
+    
+    public double calcERuleOfThirds() {
+        return (calcEPoint()* 1/3 + calcELine() * 2/3);
     }
     
     private BufferedImage mat2BufferedImage(Mat m){
@@ -113,7 +207,6 @@ public class RuleOfThirdsAnalyzer {
         m.get(0,0,b); // get all the pixels
         BufferedImage image = new BufferedImage(m.cols(),m.rows(), type);
         final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        System.arraycopy(b, 0, targetPixels, 0, b.length);  
         return image;
     }
     

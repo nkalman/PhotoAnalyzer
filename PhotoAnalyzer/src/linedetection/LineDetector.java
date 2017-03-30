@@ -70,7 +70,7 @@ public class LineDetector {
         
         Imgproc.HoughLinesP(edgeDetectedImg, lines, 1, Math.PI/180, minOfWidthHeight*10/100, diagonal*25/100, diagonal*4/100);
 
-        int firstN = (lines.rows() < 3)?lines.rows():3;
+        int firstN = (lines.rows() < 5)?lines.rows():5;
 
         for (int x = 0; x < lines.rows(); x++) {
             double[] vec = lines.get(x,0 );
@@ -92,17 +92,14 @@ public class LineDetector {
                     (angle_inv >= diagAngle2 - DIAGONAL_TRESHOLD && angle_inv <= diagAngle2 + DIAGONAL_TRESHOLD)){
                 diagonalLineList.add(new Line(x1,y1,x2,y2));
                 Imgproc.line(img, startPoint, endPoint, new Scalar(255,255,0), 4);
-//                System.out.println("   ok");
             }
             else {
                 lineList.add(new Line(x1,y1,x2,y2));
-                Imgproc.line(img, startPoint, endPoint, new Scalar(255,0,0), 1);
-//                System.out.println("   nem ok");
+                //Imgproc.line(img, startPoint, endPoint, new Scalar(255,0,0), 1);
             }
 
         }
-          
-        System.out.println(lineList);
+
           
         Collections.sort(lineList, new Comparator<Line>() {
              @Override public int compare(Line l1, Line l2) {
@@ -111,8 +108,7 @@ public class LineDetector {
 
         });
 
-        System.out.println(lineList);
-           
+        ArrayList arr = new ArrayList<Line>();
            
         for (int i=0; i<firstN+1; i++) {
             if (lineList.size() >= firstN+1) {
@@ -122,11 +118,12 @@ public class LineDetector {
                       y2 = lineList.get(i).getY2();
                Point startPoint = new Point(x1, y1);
                Point endPoint = new Point(x2, y2);
-
+               arr.add(lineList.get(i));
+               
                Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 1);
             }
         } 
-        
+        lineList = arr;
     }
     
 }
