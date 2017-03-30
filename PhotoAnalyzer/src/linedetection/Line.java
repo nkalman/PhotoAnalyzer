@@ -44,6 +44,12 @@ public class Line {
         return length;
     }
     
+    public double getAngle(Line ln2) {
+        double angle1 = Math.atan2(getY1() - getY2(), getX1() - getX2());
+        double angle2 = Math.atan2(ln2.getY1() - ln2.getY2(), ln2.getX1() - ln2.getX2());
+        return angle1 - angle2;
+    }
+    
     
     
     public String toString() { 

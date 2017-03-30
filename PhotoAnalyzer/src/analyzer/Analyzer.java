@@ -32,6 +32,11 @@ public class Analyzer {
     private List<Rect> objectList;
     private List<Rect> faceList;
     private List<Line> lineList;
+    private List<Line> diagonalLineList;
+    
+    private RuleOfThirdsAnalyzer ruleOfThirdsAnalyzer;
+    
+    
     
     public Analyzer(String fileName) {
         objectDetector = new ObjectDetector(fileName);
@@ -47,8 +52,13 @@ public class Analyzer {
         faceList = faceDetector.getFaceList();
         lineDetector.findLines();
         lineList = lineDetector.getLineList();
+        diagonalLineList = lineDetector.getDiagonalLineList();
+        
+        
         
         showEvaluationSteps();
+        
+        ruleOfThirdsAnalyzer = new RuleOfThirdsAnalyzer(img, objectList, faceList, lineList);
     }
     
     public void showEvaluationSteps() {
@@ -92,4 +102,6 @@ public class Analyzer {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+    
+   
 }

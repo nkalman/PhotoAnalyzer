@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.opencv.core.Core;
+import static org.opencv.core.Core.NORM_MINMAX;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -112,7 +114,10 @@ public class ObjectDetector {
     }
     
     public void findObjects() {
-
+        
+//        Imgproc.cvtColor(img, imgGrayscale, Imgproc.COLOR_RGBA2GRAY, 1); 
+//        Core.convertScaleAbs(img, imgGrayscale);
+//        Core.normalize(imgGrayscale, imgMeanShifted, 0.0, 1.0, NORM_MINMAX);
         preProcessImg();
 
         toGrayScale(imgMeanShifted);
@@ -126,9 +131,7 @@ public class ObjectDetector {
             Double peri = Imgproc.arcLength(m2p, true);
             Imgproc.approxPolyDP(m2p, m2p, 0.02*peri, true);
             Imgproc.drawContours(imgOut, contours, -1, new Scalar(0, 0, 255), 2);
-            
-            
-            
+
             float area = img.width() * img.height();
             Rect rect = Imgproc.boundingRect(mop);
             objList.add(rect);
@@ -164,9 +167,11 @@ public class ObjectDetector {
 
             }
 
-            Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
             mainRect = bigRect;
-            mainObjects.add(mainRect);
+            if (mainRect.area() >= img.width() * img.height() * 3/100) {
+                Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
+                mainObjects.add(mainRect);
+            }
         }
         
     }

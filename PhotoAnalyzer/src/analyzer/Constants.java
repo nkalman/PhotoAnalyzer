@@ -27,4 +27,7 @@ public class Constants {
     public static final int THRESHOLD1 = 120;
     public static final int THRESHOLD2 = 250;
     public static final int APERTURE_SIZE = 3;
+    
+    //diagonal lines detection
+    public static final double DIAGONAL_TRESHOLD = 0.174533;
 }
