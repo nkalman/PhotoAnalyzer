@@ -35,6 +35,7 @@ public class Analyzer {
     private List<Line> diagonalLineList;
     
     private RuleOfThirdsAnalyzer ruleOfThirdsAnalyzer;
+    private DiagonalDominanceAnalyzer diagonalDominanceAnalyzer;
     
     
     
@@ -57,8 +58,8 @@ public class Analyzer {
         
         
         showEvaluationSteps();
-        
         ruleOfThirdsAnalyzer = new RuleOfThirdsAnalyzer(img, objectList, faceList, lineList);
+        diagonalDominanceAnalyzer = new DiagonalDominanceAnalyzer(img, diagonalLineList);
     }
     
     public void showEvaluationSteps() {
@@ -77,7 +78,7 @@ public class Analyzer {
     
             
             
-    private BufferedImage mat2BufferedImage(Mat m){
+    public BufferedImage mat2BufferedImage(Mat m){
         int type = BufferedImage.TYPE_BYTE_GRAY;
         if ( m.channels() > 1 ) {
             type = BufferedImage.TYPE_3BYTE_BGR;
@@ -91,7 +92,7 @@ public class Analyzer {
         return image;
     }
     
-    public static void showImage(BufferedImage img) {
+    public void showImage(BufferedImage img) {
         ImageIcon icon=new ImageIcon(img);
         JFrame frame=new JFrame();
         frame.setLayout(new FlowLayout());        

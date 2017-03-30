@@ -23,23 +23,9 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\air.jpg";
+        String filename = "D:\\1Downloads\\Firefox downloads\\trees.jpg";
 
         new Analyzer(filename);
-    }
-    
-    
-    
-    public static void showImage(BufferedImage img) {
-        ImageIcon icon=new ImageIcon(img);
-        JFrame frame=new JFrame();
-        frame.setLayout(new FlowLayout());        
-        frame.setSize(img.getWidth(null)+50, img.getHeight(null)+50);     
-        JLabel lbl=new JLabel();
-        lbl.setIcon(icon);
-        frame.add(lbl);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
 }

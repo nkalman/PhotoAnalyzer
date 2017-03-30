@@ -166,7 +166,7 @@ public class RuleOfThirdsAnalyzer {
                 min = distances.get(i);
             }
         }
-//        showImage(mat2BufferedImage(img));
+        
         return min;
     }
     
@@ -197,7 +197,7 @@ public class RuleOfThirdsAnalyzer {
         return (calcEPoint()* 1/3 + calcELine() * 2/3);
     }
     
-    private BufferedImage mat2BufferedImage(Mat m){
+    public BufferedImage mat2BufferedImage(Mat m){
         int type = BufferedImage.TYPE_BYTE_GRAY;
         if ( m.channels() > 1 ) {
             type = BufferedImage.TYPE_3BYTE_BGR;
@@ -207,10 +207,11 @@ public class RuleOfThirdsAnalyzer {
         m.get(0,0,b); // get all the pixels
         BufferedImage image = new BufferedImage(m.cols(),m.rows(), type);
         final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        System.arraycopy(b, 0, targetPixels, 0, b.length);  
         return image;
     }
     
-    public static void showImage(BufferedImage img) {
+    public void showImage(BufferedImage img) {
         ImageIcon icon=new ImageIcon(img);
         JFrame frame=new JFrame();
         frame.setLayout(new FlowLayout());        

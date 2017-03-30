@@ -15,10 +15,8 @@
             <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/linedetection/LineDetector.java</file>
             <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/analyzer/Application.java</file>
             <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/analyzer/Analyzer.java</file>
-            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/objectdetection/ObjectDetector.java</file>
-            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/analyzer/Constants.java</file>
-            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/linedetection/Line.java</file>
-            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/facedetection/FaceDetector.java</file>
+            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/analyzer/RuleOfThirdsAnalyzer.java</file>
+            <file>file:/D:/Egyetem/3ev2felev/NetBeansProjects/PhotoAnalyzer/PhotoAnalyzer/src/analyzer/DiagonalDominanceAnalyzer.java</file>
         </group>
     </open-files>
 </project-private>

@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.opencv.core.Core;
-import static org.opencv.core.Core.NORM_MINMAX;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -168,8 +166,12 @@ public class ObjectDetector {
             }
 
             mainRect = bigRect;
-            if (mainRect.area() >= img.width() * img.height() * 3/100) {
+            
+            if (objList.size() > 5 && mainRect.area() >= img.width() * img.height() * 3/100 ) {
                 Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
+                mainObjects.add(mainRect);
+            }
+            else if (objList.size() <= 5) {
                 mainObjects.add(mainRect);
             }
         }
