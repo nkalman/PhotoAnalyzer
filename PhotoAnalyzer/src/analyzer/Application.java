@@ -5,14 +5,7 @@
  */
 package analyzer;
 
-import facedetection.FaceDetector;
-import java.awt.FlowLayout;
-import java.awt.image.BufferedImage;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import linedetection.LineDetector;
-import objectdetection.ObjectDetector;
+
 import org.opencv.core.Core;
 
 /**
@@ -23,9 +16,10 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\nomi1.jpg";
+        String filename = "D:\\1Downloads\\Firefox downloads\\man22.jpg";
 
-        new Analyzer(filename);
+        Analyzer analyzer = new Analyzer(filename);
+        System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
     }
     
 }

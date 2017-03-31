@@ -39,7 +39,7 @@ public class Analyzer {
     private VisualBalanceAnalyzer visualBalanceAnalyzer;
     
     private AestheticScoreCalculator aestheticScoreCalculator;
-    
+    private RegionSizeAnalyzer regionSizeAnalyzer;
     
     public Analyzer(String fileName) {
         objectDetector = new ObjectDetector(fileName);
@@ -60,7 +60,16 @@ public class Analyzer {
         showEvaluationSteps();
         
         aestheticScoreCalculator = new AestheticScoreCalculator(img, objectList, faceList, lineList, diagonalLineList);
-        System.out.println("AESTHETIC SCORE: " + aestheticScoreCalculator.calcAestheticScore());
+        regionSizeAnalyzer = new RegionSizeAnalyzer(img, objectList, faceList);
+    }
+    
+    public double calcCombinedAestheticScore() {
+        double wSZ = 0.08;
+        double aestheticScore = aestheticScoreCalculator.calcAestheticScore();
+        double regionsSizeScore = regionSizeAnalyzer.calcRegionSize();
+        System.out.println("AESTHETIC SCORE: " + aestheticScore);
+        System.out.println("REGION SIZE: " + regionsSizeScore);
+        return ((1-wSZ) * aestheticScore + wSZ * regionsSizeScore);
     }
     
     public void showEvaluationSteps() {

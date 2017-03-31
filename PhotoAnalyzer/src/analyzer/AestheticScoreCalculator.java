@@ -22,8 +22,7 @@ public class AestheticScoreCalculator {
     public AestheticScoreCalculator(Mat img, List<Rect> objectList, List<Rect> faceList, List<Line> lineList, List<Line> diagonalLineList) {
         ruleOfThirdsAnalyzer = new RuleOfThirdsAnalyzer(img, objectList, faceList, lineList);
         diagonalDominanceAnalyzer = new DiagonalDominanceAnalyzer(img, diagonalLineList);
-        visualBalanceAnalyzer = new VisualBalanceAnalyzer(img, objectList, faceList);
-        
+        visualBalanceAnalyzer = new VisualBalanceAnalyzer(img, objectList, faceList); 
     }
     
     public double calcAestheticScore() {
@@ -40,6 +39,5 @@ public class AestheticScoreCalculator {
         
         
         return (wRT* rtValue + wDD*ddValue + wVB * vbValue) / (wRT + wDD + wVB);
-    }
-    
+    }   
 }
