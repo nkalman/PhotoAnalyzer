@@ -23,7 +23,7 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\man22.jpg";
+        String filename = "D:\\1Downloads\\Firefox downloads\\nomi1.jpg";
 
         new Analyzer(filename);
     }

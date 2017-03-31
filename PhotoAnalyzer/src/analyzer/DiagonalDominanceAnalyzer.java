@@ -30,7 +30,7 @@ public class DiagonalDominanceAnalyzer {
         img = image;
         diagonalLineList = dList;
 
-        System.out.println("DIAGONAL DOMINANCE: " + calcEDiagonalDominance());
+        //System.out.println("DIAGONAL DOMINANCE: " + calcEDiagonalDominance());
     }
     
     private double minDistToThirdLines(Line line) {
@@ -90,7 +90,7 @@ public class DiagonalDominanceAnalyzer {
         return sumOfLines;
     }
     
-    private double calcEDiagonalDominance() {
+    public double calcEDiagonalDominance() {
         if (diagonalLineList.size() > 0) {
             double eLine = calcSumOfLines();
             double sum = 0;

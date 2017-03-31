@@ -24,7 +24,7 @@ public class VisualBalanceAnalyzer {
         objectList = oList;
         faceList = fList;
         
-        System.out.println("VISUAL BALANCE: " + calcEVisualBalance());
+        //System.out.println("VISUAL BALANCE: " + calcEVisualBalance());
     }
     
     public double calcSumOfMass() {
@@ -82,7 +82,7 @@ public class VisualBalanceAnalyzer {
         return xDiff / img.width() + yDiff / img.height();
     }
     
-    private double calcEVisualBalance() {
+    public double calcEVisualBalance() {
         double distance = distanceBtwPoints(getAllRegionsCenter(), getImgCenter());
         double vb =  Math.exp(-1 * Math.pow(distance, 2) / (2 * 0.2));
         return vb;

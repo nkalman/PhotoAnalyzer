@@ -38,6 +38,8 @@ public class Analyzer {
     private DiagonalDominanceAnalyzer diagonalDominanceAnalyzer;
     private VisualBalanceAnalyzer visualBalanceAnalyzer;
     
+    private AestheticScoreCalculator aestheticScoreCalculator;
+    
     
     public Analyzer(String fileName) {
         objectDetector = new ObjectDetector(fileName);
@@ -54,13 +56,11 @@ public class Analyzer {
         lineDetector.findLines();
         lineList = lineDetector.getLineList();
         diagonalLineList = lineDetector.getDiagonalLineList();
-        
-        
-        
+
         showEvaluationSteps();
-        ruleOfThirdsAnalyzer = new RuleOfThirdsAnalyzer(img, objectList, faceList, lineList);
-        diagonalDominanceAnalyzer = new DiagonalDominanceAnalyzer(img, diagonalLineList);
-        visualBalanceAnalyzer = new VisualBalanceAnalyzer(img, objectList, faceList);
+        
+        aestheticScoreCalculator = new AestheticScoreCalculator(img, objectList, faceList, lineList, diagonalLineList);
+        System.out.println("AESTHETIC SCORE: " + aestheticScoreCalculator.calcAestheticScore());
     }
     
     public void showEvaluationSteps() {
