@@ -36,7 +36,7 @@ public class Analyzer {
     
     private RuleOfThirdsAnalyzer ruleOfThirdsAnalyzer;
     private DiagonalDominanceAnalyzer diagonalDominanceAnalyzer;
-    
+    private VisualBalanceAnalyzer visualBalanceAnalyzer;
     
     
     public Analyzer(String fileName) {
@@ -60,6 +60,7 @@ public class Analyzer {
         showEvaluationSteps();
         ruleOfThirdsAnalyzer = new RuleOfThirdsAnalyzer(img, objectList, faceList, lineList);
         diagonalDominanceAnalyzer = new DiagonalDominanceAnalyzer(img, diagonalLineList);
+        visualBalanceAnalyzer = new VisualBalanceAnalyzer(img, objectList, faceList);
     }
     
     public void showEvaluationSteps() {

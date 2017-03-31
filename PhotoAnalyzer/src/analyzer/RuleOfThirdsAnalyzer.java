@@ -45,7 +45,7 @@ public class RuleOfThirdsAnalyzer {
         calculatePowerPoints();    
         calculateThirdLines();
         
-        System.out.println(calcERuleOfThirds());
+        System.out.println("RULE OF THIRDS: " + calcERuleOfThirds());
     }
     
     public double calcSumOfMass() {
