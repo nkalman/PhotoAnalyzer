@@ -17,8 +17,6 @@ import linedetection.Line;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 /**
  *
@@ -125,41 +123,16 @@ public class RuleOfThirdsAnalyzer {
         
         ArrayList<Double> distances = new ArrayList();
         double dist = 0;
-        dist = distanceBtwPoints(p1, new Point(width/3, p1.y));
-        dist += distanceBtwPoints(p2, new Point(width/3, p2.y));
-        dist = dist / 2;
-                distances.add(dist);
-//        System.out.println(dist);
-//        Imgproc.line(img, p1,new Point(width/3, p1.y), new Scalar(255,0,0), 1);
-//        Imgproc.line(img, p2,new Point(width/3, p2.y), new Scalar(255,0,0), 1);
         
-        dist = 0;
-        dist = distanceBtwPoints(p1, new Point(p1.x, height/3));
-        dist += distanceBtwPoints(p2, new Point(p2.x, height/3));
-        dist = dist / 2;
-        distances.add(dist);
-//        System.out.println(dist);
-//        Imgproc.line(img, p1,new Point(p1.x, height/3), new Scalar(0,255,0), 1);
-//        Imgproc.line(img, p2,new Point(p2.x, height/3), new Scalar(0,255,0), 1);
-        
-        dist = 0;
-        dist = distanceBtwPoints(p1, new Point(2*width/3, p1.y));
-        dist += distanceBtwPoints(p2, new Point(2*width/3, p2.y));
-        dist = dist / 2;
-        distances.add(dist);
-//        System.out.println(dist);
-//        Imgproc.line(img, p1,new Point(2*width/3, p1.y), new Scalar(0,0,255), 1);
-//        Imgproc.line(img, p2,new Point(2*width/3, p2.y), new Scalar(0,0,255), 1);
-        
-        dist = 0;
-        dist = distanceBtwPoints(p1, new Point(p1.x, 2*height/3));
-        dist += distanceBtwPoints(p2, new Point(p2.x, 2*height/3));
-        dist = dist / 2;
-        distances.add(dist);
-//        System.out.println(dist);
-//        Imgproc.line(img, p1,new Point(p1.x, 2*height/3), new Scalar(255,255,0), 1);
-//        Imgproc.line(img, p2,new Point(p2.x, 2*height/3), new Scalar(255,255,0), 1);
-        
+        for (Line thLine : thirdLines) {
+            Point closestPoint = getClosestPointOnSegment(thLine, p1);
+            dist = distanceBtwPoints(closestPoint, p1); 
+            closestPoint = getClosestPointOnSegment(thLine, p2);
+            dist += distanceBtwPoints(closestPoint, p2);
+            distances.add(dist);
+ 
+        }
+               
         double min = distances.get(0);
         for (int i = 1; i < distances.size(); ++i) {
             if (distances.get(i) < min) {
@@ -221,6 +194,28 @@ public class RuleOfThirdsAnalyzer {
         frame.add(lbl);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    
+    public Point getClosestPointOnSegment(Line line, Point p) {
+        double xDelta = line.getX2() - line.getX1();
+        double yDelta = line.getY2() - line.getY1();
+
+        double u = ((p.x - line.getX1()) * xDelta + (p.y- line.getY1()) * yDelta) 
+                / (xDelta * xDelta + yDelta * yDelta);
+
+        Point closestPoint;
+        if (u < 0) {
+          closestPoint = new Point(line.getX1(), line.getY1());
+        }
+        else if (u > 1) {
+          closestPoint = new Point(line.getX2(), line.getY2());
+        }
+        else {
+          closestPoint = new Point((int) Math.round(line.getX1() + u * xDelta), 
+                  (int) Math.round(line.getY1()+ u * yDelta));
+        }
+
+        return closestPoint;
     }
     
 }

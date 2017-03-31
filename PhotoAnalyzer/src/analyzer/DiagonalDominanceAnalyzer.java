@@ -81,8 +81,6 @@ public class DiagonalDominanceAnalyzer {
             return dist2;
         
         }
-
-        
     }
     
     private double calcSumOfLines() {
