@@ -29,12 +29,13 @@ public class VisualBalanceAnalyzer {
     
     public double calcSumOfMass() {
         double imgArea = img.width() * img.height();
+        double weight = imgArea * 3/100;
         double sumOfMass = 0;
         for (Rect rect : objectList) {
             sumOfMass += rect.area();
         }
         for (Rect rect : faceList) {
-            sumOfMass += rect.area();
+            sumOfMass += rect.area() + weight;
         }    
         return sumOfMass;
     }
@@ -56,6 +57,8 @@ public class VisualBalanceAnalyzer {
         int y = 0;
         int sumX = 0;
         int sumY = 0;
+        double imgArea = img.width() * img.height();
+        double weight = imgArea * 3/100;
         Point actualCenter;
         for (Rect rect : objectList) {
             actualCenter = getRectCenter(rect);
@@ -68,8 +71,8 @@ public class VisualBalanceAnalyzer {
             actualCenter = getRectCenter(rect);
             x = (int)actualCenter.x;
             y = (int)actualCenter.y;
-            sumX += (x * rect.area());
-            sumY += (y * rect.area());
+            sumX += (x * (rect.area() + weight));
+            sumY += (y * (rect.area() + weight));
         }
         sumX = (int)(sumX / calcSumOfMass());
         sumY = (int)(sumY / calcSumOfMass());

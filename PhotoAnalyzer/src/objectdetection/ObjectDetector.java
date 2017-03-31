@@ -93,7 +93,7 @@ public class ObjectDetector {
 
         int spatialWindowRadius = ((img.width() + img.height() ) / 2);
         spatialWindowRadius = spatialWindowRadius * 3/100;
-        System.out.println(spatialWindowRadius);
+        //System.out.println(spatialWindowRadius);
         TermCriteria termCriteria = new TermCriteria(COUNT + EPS, COUNT_VALUE, EPS_VALUE);
         Imgproc.pyrMeanShiftFiltering(img, imgMeanShifted, spatialWindowRadius,
                 COLOR_WINDOW_RADIUS, MAX_LEVEL, termCriteria);

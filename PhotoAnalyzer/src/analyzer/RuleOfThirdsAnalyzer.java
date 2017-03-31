@@ -50,12 +50,13 @@ public class RuleOfThirdsAnalyzer {
     
     public double calcSumOfMass() {
         double imgArea = img.width() * img.height();
+        double weight = imgArea * 3/100;
         double sumOfMass = 0;
         for (Rect rect : objectList) {
             sumOfMass += rect.area();
         }
         for (Rect rect : faceList) {
-            sumOfMass += rect.area();
+            sumOfMass += rect.area() + weight;
         }    
         return sumOfMass;
     }
@@ -89,6 +90,8 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private double calcEPoint() {
+        double imgArea = img.width() * img.height();
+        double weight = imgArea * 3/100;
         if (objectList.size() + faceList.size() > 0) {
             double ePoint = calcSumOfMass();
             double sum = 0;
@@ -96,7 +99,7 @@ public class RuleOfThirdsAnalyzer {
                 sum = sum +  (rect.area() * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
             }
             for (Rect rect : faceList) {
-                sum = sum +  (rect.area()* 3/100 * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
+                sum = sum +  ((rect.area()+ weight) * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
             }
             System.out.println("\n" + "epoint: " + 1/ePoint * sum);
             return (1/ePoint * sum);

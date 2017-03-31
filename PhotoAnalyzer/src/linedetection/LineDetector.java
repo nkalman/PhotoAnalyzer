@@ -85,7 +85,7 @@ public class LineDetector {
             
             double angle_inv = horizontalLine.getAngle(new Line(x1,y1,x2,y2));
             double angle = horizontalLine.getAngle(new Line(x2,y2,x1,y1));
-            System.out.print(angle);
+            //System.out.print(angle);
             if ((angle >= diagAngle1 - DIAGONAL_TRESHOLD && angle <= diagAngle1 + DIAGONAL_TRESHOLD) ||
                     (angle >= diagAngle2 - DIAGONAL_TRESHOLD && angle <= diagAngle2 + DIAGONAL_TRESHOLD) ||
                     (angle_inv >= diagAngle1 - DIAGONAL_TRESHOLD && angle_inv <= diagAngle1 + DIAGONAL_TRESHOLD) ||
