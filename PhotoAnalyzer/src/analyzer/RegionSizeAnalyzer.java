@@ -43,31 +43,36 @@ public class RegionSizeAnalyzer {
         double num = 0;
         int nr = 0;
         List<Double> vals;
-        for (Rect rect : objectList) {
-            vals = new ArrayList();
-            for (int i = 0; i < 3; ++i) {
-                num = (calcAreaRatio(rect) - rValues.get(i)) * 
-                        (calcAreaRatio(rect) - rValues.get(i))  * (-1);
-                num = num / (2*rhoValues.get(i));
-                vals.add(Math.exp(num));
+        if(objectList.size() + faceList.size() > 0) {
+            for (Rect rect : objectList) {
+                vals = new ArrayList();
+                for (int i = 0; i < 3; ++i) {
+                    num = (calcAreaRatio(rect) - rValues.get(i)) * 
+                            (calcAreaRatio(rect) - rValues.get(i))  * (-1);
+                    num = num / (2*rhoValues.get(i));
+                    vals.add(Math.exp(num));
+                }
+                sum += maxima(vals);
+                nr++;
             }
-            sum += maxima(vals);
-            nr++;
-        }
-        
-        for (Rect rect : faceList) {
-            vals = new ArrayList();
-            for (int i = 0; i < 3; ++i) {
-                num = (calcAreaRatio(rect) - rValues.get(i)) * 
-                        (calcAreaRatio(rect) - rValues.get(i))  * (-1);
-                num = num / (2*rhoValues.get(i));
-                vals.add(Math.exp(num));
+
+            for (Rect rect : faceList) {
+                vals = new ArrayList();
+                for (int i = 0; i < 3; ++i) {
+                    num = (calcAreaRatio(rect) - rValues.get(i)) * 
+                            (calcAreaRatio(rect) - rValues.get(i))  * (-1);
+                    num = num / (2*rhoValues.get(i));
+                    vals.add(Math.exp(num));
+                }
+                sum += maxima(vals);
+                nr++;
             }
-            sum += maxima(vals);
-            nr++;
-        }
         
         return sum / nr;
+        }
+        else {
+            return 0;
+        }
     }
     
     private double maxima(List<Double> list) {

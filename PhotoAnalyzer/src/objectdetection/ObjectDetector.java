@@ -178,8 +178,7 @@ public class ObjectDetector {
         
     }
     
-    public boolean doOverlap(Rect r1, Rect r2)
-    {
+    public boolean doOverlap(Rect r1, Rect r2) {
         if(r1.tl().x > r2.br().x || 
                 r1.br().x < r2.tl().x ||
                 r1.tl().y > r2.br().y ||
