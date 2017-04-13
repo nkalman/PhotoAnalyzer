@@ -120,7 +120,7 @@ public class LineDetector {
                Point endPoint = new Point(x2, y2);
                arr.add(lineList.get(i));
                
-               Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 1);
+               Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 3);
             }
         } 
         lineList = arr;

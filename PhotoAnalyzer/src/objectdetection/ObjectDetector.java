@@ -133,7 +133,7 @@ public class ObjectDetector {
             float area = img.width() * img.height();
             Rect rect = Imgproc.boundingRect(mop);
             objList.add(rect);
-            Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 0));
+            //Imgproc.rectangle(imgOut, rect.tl(), rect.br(), new Scalar(255, 0, 0));
         }
         
         Collections.sort(objList, new Comparator<Rect>() {
@@ -166,9 +166,10 @@ public class ObjectDetector {
             }
 
             mainRect = bigRect;
+            Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0),3);
             
             if (objList.size() > 5 && mainRect.area() >= img.width() * img.height() * 3/100 ) {
-                Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0));
+                Imgproc.rectangle(imgOut, bigRect.tl(), bigRect.br(), new Scalar(255, 255, 0),3);
                 mainObjects.add(mainRect);
             }
             else if (objList.size() <= 5) {

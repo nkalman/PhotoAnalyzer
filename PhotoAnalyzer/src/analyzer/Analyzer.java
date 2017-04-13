@@ -7,8 +7,11 @@ package analyzer;
 
 import facedetection.FaceDetector;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -41,11 +44,21 @@ public class Analyzer {
     private AestheticScoreCalculator aestheticScoreCalculator;
     private RegionSizeAnalyzer regionSizeAnalyzer;
     
+    private int x;
+    private int y;
+    private int width;
+    private int height;
+    
     public Analyzer(String fileName) {
         objectDetector = new ObjectDetector(fileName);
         faceDetector = new FaceDetector(fileName);
         lineDetector = new LineDetector(fileName);
         img = objectDetector.getImg();
+        
+        x = 0;
+        y = 0;
+        width = img.width();
+        height = img.height();
         
         showImage(mat2BufferedImage(img));
         
@@ -63,13 +76,31 @@ public class Analyzer {
         regionSizeAnalyzer = new RegionSizeAnalyzer(img, objectList, faceList);
     }
     
+    public void setFrame(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+    
     public double calcCombinedAestheticScore() {
         double wSZ = 0.08;
-        double aestheticScore = aestheticScoreCalculator.calcAestheticScore();
-        double regionsSizeScore = regionSizeAnalyzer.calcRegionSize();
-        System.out.println("AESTHETIC SCORE: " + aestheticScore);
-        System.out.println("REGION SIZE: " + regionsSizeScore);
+        
+        long startTime = System.currentTimeMillis();
+        double aestheticScore = 0;
+        double regionsSizeScore = 0;
+        //for (int i = 0; i < 20000; ++i) {   
+            aestheticScoreCalculator.setFrame(x, y, width, height);
+            aestheticScore = aestheticScoreCalculator.calcAestheticScore();
+            regionSizeAnalyzer.setFrame(x, y, width, height);
+            regionsSizeScore = regionSizeAnalyzer.calcRegionSize();
+        //}
+        
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        System.out.println("IDOOO==== " + estimatedTime );
         return ((1-wSZ) * aestheticScore + wSZ * regionsSizeScore);
+        
+
     }
     
     public void showEvaluationSteps() {
@@ -113,6 +144,7 @@ public class Analyzer {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+    
     
    
 }

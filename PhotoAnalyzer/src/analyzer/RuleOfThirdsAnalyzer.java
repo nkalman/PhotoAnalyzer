@@ -6,6 +6,7 @@
 package analyzer;
 
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
@@ -33,6 +34,12 @@ public class RuleOfThirdsAnalyzer {
     
     private List<Point> powerPoints;
     private List<Line> thirdLines;
+    private List<Line> frameLines;
+    
+    private int frameX;
+    private int frameY;
+    private int frameWidth;
+    private int frameHeight;
     
     public RuleOfThirdsAnalyzer(Mat image, List<Rect> oList, List<Rect> fList, List<Line> lList) {
         img = image;
@@ -42,14 +49,22 @@ public class RuleOfThirdsAnalyzer {
         
         powerPoints = new ArrayList();
         thirdLines = new ArrayList();
-        calculatePowerPoints();    
-        calculateThirdLines();
+        frameLines =  new ArrayList();
+        
         
         //System.out.println("RULE OF THIRDS: " + calcERuleOfThirds());
+        
+    }
+    
+    public void setFrame(int x, int y, int width, int height) {
+        this.frameX = x;
+        this.frameY = y;
+        this.frameWidth = width;
+        this.frameHeight = height;
     }
     
     public double calcSumOfMass() {
-        double imgArea = img.width() * img.height();
+        double imgArea = frameWidth * frameHeight;
         double weight = imgArea * 3/100;
         double sumOfMass = 0;
         for (Rect rect : objectList) {
@@ -61,9 +76,11 @@ public class RuleOfThirdsAnalyzer {
         return sumOfMass;
     }
      
-    private void calculatePowerPoints() {
-        int width = img.width();
-        int height = img.height();
+    
+    public void calculatePowerPoints() {
+        powerPoints = new ArrayList();
+        int width = frameWidth;
+        int height = frameHeight;
         powerPoints.add(new Point((width-1)/3, (height-1)/3));
         powerPoints.add(new Point((width-1)/3 * 2, (height-1)/3));
         powerPoints.add(new Point((width-1)/3, (height-1)/3 * 2));
@@ -86,11 +103,11 @@ public class RuleOfThirdsAnalyzer {
     private double distanceBtwPoints(Point a, Point b) {
         double xDiff = Math.abs(a.x - b.x);
         double yDiff = Math.abs(a.y - b.y);
-        return xDiff / img.width() + yDiff / img.height();
+        return xDiff / frameWidth + yDiff / frameHeight;
     }
     
     private double calcEPoint() {
-        double imgArea = img.width() * img.height();
+        double imgArea = frameWidth * frameHeight;
         double weight = imgArea * 3/100;
         if (objectList.size() + faceList.size() > 0) {
             double ePoint = calcSumOfMass();
@@ -110,8 +127,9 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private void calculateThirdLines() {
-        int width = img.width() - 1;
-        int height = img.height() - 1;
+        thirdLines = new ArrayList();
+        int width = frameWidth - 1;
+        int height = frameHeight - 1;
         thirdLines.add(new Line(width/3, 0, width/3, height));
         thirdLines.add(new Line(2*width/3, 0, 2*width/3, height));
         thirdLines.add(new Line(0, height/3, width, height/3));
@@ -119,8 +137,8 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private double minDistToThirdLines(Line line) {
-        int width = img.width() - 1;
-        int height = img.height() - 1;
+        int width = frameWidth - 1;
+        int height = frameHeight - 1;
         Point p1 = new Point(line.getX1(), line.getY1());
         Point p2 = new Point(line.getX2(), line.getY2());
         
@@ -170,6 +188,11 @@ public class RuleOfThirdsAnalyzer {
     }
     
     public double calcERuleOfThirds() {
+        calculatePowerPoints();    
+        calculateThirdLines();
+        calculateFrameLines();
+        actualizeLineList();
+        actualizeObjectList();
         return (calcEPoint()* 1/3 + calcELine() * 2/3);
     }
     
@@ -219,6 +242,158 @@ public class RuleOfThirdsAnalyzer {
         }
 
         return closestPoint;
+    }
+    
+    private Point intersPointOfTwoLines(Line l1, Line l2) {
+        double x1 = l1.getX1();
+        double x2 = l1.getX2();
+        double y1 = l1.getY1();
+        double y2 = l1.getY2();
+        
+        double x3 = l2.getX1();
+        double x4 = l2.getX2();
+        double y3 = l2.getY1();
+        double y4 = l2.getY2();
+        
+        double d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+        if (d == 0) {
+            return null;
+        }
+
+        double xi = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+        double yi = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+        
+        if (!isPointInFrame(new Point(xi,yi))) {
+            return null;
+        }
+        return new Point(xi,yi);
+    }
+    
+    private void calculateFrameLines() {
+        frameLines = new ArrayList();
+        Line line = new Line(frameX, frameY, frameX+frameWidth-1, frameY);
+        frameLines.add(line);
+        line = new Line(frameX, frameY, frameX, frameY+frameHeight-1);
+        frameLines.add(line);
+        line = new Line(frameX+frameWidth-1, frameY, frameX+frameWidth-1, frameY+frameHeight-1);
+        frameLines.add(line);
+        line = new Line(frameX, frameY+frameHeight-1, frameX+frameWidth-1, frameY+frameHeight-1);
+        frameLines.add(line);
+    }
+    
+    private boolean isPointInFrame(Point p) {
+        if (p.x >= frameX-1 && p.x <= frameWidth+1 &&
+                p.y >= frameY-1 && p.y <= frameHeight+1) {
+            return true;
+        }
+        return false;
+    }
+    
+    private Line getLineSegmentInFrame(Line originalLine) {
+        ArrayList<Point> points = new ArrayList();
+        Point intersect;
+        int nullNr = 0;
+        for (Line frameLine : frameLines) {
+            intersect = intersPointOfTwoLines(originalLine, frameLine);
+            
+            if (intersect != null) {
+                if (isPointOnLine(intersect, originalLine)) {
+                    if (intersect.x == 0 && intersect.y == 0 && nullNr == 0) {
+                        points.add(intersect);
+                        nullNr++;
+                    }
+                    else if (intersect.x == 0 && intersect.y == 0) {
+                    }
+                    else {
+                        points.add(intersect);
+                    }
+                }
+            }
+        }
+        
+        if (points.size() == 2) {
+            if (isPointOnLine(new Point(points.get(0).x, points.get(0).y), originalLine) &&
+                    isPointOnLine(new Point(points.get(1).x, points.get(1).y), originalLine)) {
+                return new Line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
+            }
+        }
+        else if (points.size() == 1) {
+            Point secondPoint = new Point(originalLine.getX1(), originalLine.getY1());
+            if (!isPointInFrame(secondPoint)) {
+                secondPoint = new Point(originalLine.getX2(), originalLine.getY2());
+            }
+            return new Line(points.get(0).x, points.get(0).y, secondPoint.x, secondPoint.y);
+        }
+        Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
+        Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
+        if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
+            return originalLine;
+        }
+        System.out.println("nil eset");
+        return null;
+    }
+    
+    private boolean isPointOnLine(Point point, Line line) {
+        Point p1 = new Point(line.getX1(), line.getY1());
+        Point p2 = new Point(line.getX2(), line.getY2());
+        return normalDistBtwPoints(p1,point) + normalDistBtwPoints(p2, point) == normalDistBtwPoints(p1, p2);
+    }
+    
+    private double normalDistBtwPoints(Point p1, Point p2) {
+        return (Math.sqrt(Math.pow(p1.x-p2.x, 2) + Math.pow(p1.y-p2.y, 2)));
+    }
+    
+    private void actualizeLineList() {
+        List<Line> actualLines = new ArrayList();
+        for (Line line : lineList) {
+            Line lineInFrame = getLineSegmentInFrame(line);
+            if (line != null) {
+                actualLines.add(lineInFrame);
+            }
+        }
+        lineList = actualLines;
+    }
+    
+    private Rect intersection(Rect r2) {
+        System.out.println("------------------------");
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameWidth+1, frameHeight+1);
+        Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
+        
+        Rectangle intersect = awtRect1.intersection(awtRect2);
+        System.out.println(r2.x + " " + r2.y + " " + r2.width + " " + r2.height);
+        System.out.println(intersect.x + " " + intersect.y + " " + intersect.width + " " + intersect.height);
+        System.out.println("------------------------");
+        if (intersect.width > 0 && intersect.height > 0) {
+            return new Rect(intersect.x, intersect.y, intersect.width, intersect.height);
+        }
+        else {
+            return null;
+        }
+    }
+    
+    private void actualizeObjectList() {
+        List<Rect> objectsInFrame = new ArrayList(0);
+        System.out.println("obj=" + objectList.size());
+        for (Rect rect : objectList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+
+        }
+        objectList = objectsInFrame;
+        System.out.println("obj2=" + objectList.size());
+        System.out.println("face=" + faceList.size());
+        objectsInFrame = new ArrayList();
+        for (Rect rect : faceList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+
+        }
+        faceList = objectsInFrame;
+        System.out.println("face2=" + faceList.size());
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package analyzer;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.Mat;
@@ -20,6 +21,11 @@ public class RegionSizeAnalyzer {
     private List<Rect> faceList;
     private List<Double> rValues;
     private List<Double> rhoValues;
+    
+    private int frameX;
+    private int frameY;
+    private int frameWidth;
+    private int frameHeight;
     
     public RegionSizeAnalyzer(Mat image, List<Rect> oList, List<Rect> fList) {
         img = image;
@@ -38,7 +44,15 @@ public class RegionSizeAnalyzer {
         
     }
     
+    public void setFrame(int x, int y, int width, int height) {
+        this.frameX = x;
+        this.frameY = y;
+        this.frameWidth = width;
+        this.frameHeight = height;
+    }
+    
     public double calcRegionSize() {
+        actualizeObjectList();
         double sum = 0;
         double num = 0;
         int nr = 0;
@@ -86,7 +100,41 @@ public class RegionSizeAnalyzer {
     }
     
     private double calcAreaRatio(Rect rect) {
-        double imgArea = img.width() * img.height();
+        double imgArea = frameWidth * frameHeight;
         return ( rect.area() / imgArea );
+    }
+    
+    private Rect intersection(Rect r2) {
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameWidth+1, frameHeight+1);
+        Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
+        
+        Rectangle intersect = awtRect1.intersection(awtRect2);
+        if (intersect.width > 0 && intersect.height > 0) {
+            return new Rect(intersect.x, intersect.y, intersect.width, intersect.height);
+        }
+        else {
+            return null;
+        }
+    }
+    
+    private void actualizeObjectList() {
+        List<Rect> objectsInFrame = new ArrayList(0);
+        for (Rect rect : objectList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+
+        }
+        objectList = objectsInFrame;
+        objectsInFrame = new ArrayList();
+        for (Rect rect : faceList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+
+        }
+        faceList = objectsInFrame;
     }
 }

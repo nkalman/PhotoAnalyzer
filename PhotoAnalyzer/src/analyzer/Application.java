@@ -23,7 +23,7 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\red.png";
+        String filename = "D:\\1Downloads\\Firefox downloads\\man.jpg";
 
         Analyzer analyzer = new Analyzer(filename);
         System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());

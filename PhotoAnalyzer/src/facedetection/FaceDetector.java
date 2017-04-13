@@ -40,6 +40,7 @@ public class FaceDetector {
     }
     
     public void findFaces() {
+        
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         CascadeClassifier faceDetector = new CascadeClassifier("D:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml");
         MatOfRect faceDetections = new MatOfRect();
