@@ -81,10 +81,10 @@ public class RuleOfThirdsAnalyzer {
         powerPoints = new ArrayList();
         int width = frameWidth;
         int height = frameHeight;
-        powerPoints.add(new Point((width-1)/3, (height-1)/3));
-        powerPoints.add(new Point((width-1)/3 * 2, (height-1)/3));
-        powerPoints.add(new Point((width-1)/3, (height-1)/3 * 2));
-        powerPoints.add(new Point((width-1)/3 * 2, (height-1)/3 * 2));
+        powerPoints.add(new Point(frameX + (width-1)/3, frameY + (height-1)/3));
+        powerPoints.add(new Point(frameX + (width-1)/3 * 2, frameY + (height-1)/3));
+        powerPoints.add(new Point(frameX + (width-1)/3, frameY + (height-1)/3 * 2));
+        powerPoints.add(new Point(frameX + (width-1)/3 * 2, frameY + (height-1)/3 * 2));
     }
     
     private double minDistToPowerPoints(Rect rect) {
@@ -130,10 +130,10 @@ public class RuleOfThirdsAnalyzer {
         thirdLines = new ArrayList();
         int width = frameWidth - 1;
         int height = frameHeight - 1;
-        thirdLines.add(new Line(width/3, 0, width/3, height));
-        thirdLines.add(new Line(2*width/3, 0, 2*width/3, height));
-        thirdLines.add(new Line(0, height/3, width, height/3));
-        thirdLines.add(new Line(0, 2*height/3, width, 2*height/3));  
+        thirdLines.add(new Line(frameX + width/3, frameY, width/3, frameY + height));
+        thirdLines.add(new Line(frameX + 2*width/3, frameY, 2*width/3, frameY + height));
+        thirdLines.add(new Line(frameX, height/3, frameY + width, frameY + height/3));
+        thirdLines.add(new Line(frameX, 2*height/3, frameY + width, frameY + 2*height/3));  
     }
     
     private double minDistToThirdLines(Line line) {
@@ -282,8 +282,8 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private boolean isPointInFrame(Point p) {
-        if (p.x >= frameX-1 && p.x <= frameWidth+1 &&
-                p.y >= frameY-1 && p.y <= frameHeight+1) {
+        if (p.x >= frameX-1 && p.x <= frameX + frameWidth+1 &&
+                p.y >= frameY-1 && p.y <= frameY + frameHeight+1) {
             return true;
         }
         return false;
@@ -355,14 +355,12 @@ public class RuleOfThirdsAnalyzer {
     }
     
     private Rect intersection(Rect r2) {
-        System.out.println("------------------------");
-        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameWidth+1, frameHeight+1);
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameX + frameWidth+1,frameY + frameHeight+1);
         Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
         
         Rectangle intersect = awtRect1.intersection(awtRect2);
         System.out.println(r2.x + " " + r2.y + " " + r2.width + " " + r2.height);
         System.out.println(intersect.x + " " + intersect.y + " " + intersect.width + " " + intersect.height);
-        System.out.println("------------------------");
         if (intersect.width > 0 && intersect.height > 0) {
             return new Rect(intersect.x, intersect.y, intersect.width, intersect.height);
         }
@@ -373,7 +371,6 @@ public class RuleOfThirdsAnalyzer {
     
     private void actualizeObjectList() {
         List<Rect> objectsInFrame = new ArrayList(0);
-        System.out.println("obj=" + objectList.size());
         for (Rect rect : objectList) {
             Rect inters = intersection(rect);
             if (inters != null) {
@@ -382,8 +379,6 @@ public class RuleOfThirdsAnalyzer {
 
         }
         objectList = objectsInFrame;
-        System.out.println("obj2=" + objectList.size());
-        System.out.println("face=" + faceList.size());
         objectsInFrame = new ArrayList();
         for (Rect rect : faceList) {
             Rect inters = intersection(rect);
@@ -393,7 +388,5 @@ public class RuleOfThirdsAnalyzer {
 
         }
         faceList = objectsInFrame;
-        System.out.println("face2=" + faceList.size());
     }
-    
 }

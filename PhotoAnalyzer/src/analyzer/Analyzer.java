@@ -7,11 +7,8 @@ package analyzer;
 
 import facedetection.FaceDetector;
 import java.awt.FlowLayout;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;

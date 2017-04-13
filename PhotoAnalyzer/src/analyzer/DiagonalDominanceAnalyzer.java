@@ -20,6 +20,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 /**
+ * 
  *
  * @author Nomi
  */
@@ -43,46 +44,27 @@ public class DiagonalDominanceAnalyzer {
         //System.out.println("DIAGONAL DOMINANCE: " + calcEDiagonalDominance());
     }
     
-    private double minDistToThirdLines(Line line) {
-        int width = img.width() - 1;
-        int height = img.height() - 1;
+    private double minDistToDiagonal(Line line) {
         Point p1 = new Point(line.getX1(), line.getY1());
         Point p2 = new Point(line.getX2(), line.getY2());
         
-        Line diag1 = new Line(0, 0, width, height);
-        Line diag2 = new Line(width, 0, 0, height);
-        
-        //Imgproc.line(img, new Point(0, 0),new Point(width, height), new Scalar(0,255,0), 1);
-        
+        Line diag1 = new Line(frameX, frameY, frameX + frameWidth - 1, frameY + frameHeight - 1);
+        Line diag2 = new Line(frameX + frameWidth - 1, 0, 0, frameY + frameHeight - 1);
         double dist1 = 0;
         Point closestPoint = getClosestPointOnSegment(diag1, p1);
         dist1 += distanceBtwPoints(closestPoint, p1);
 
-        //Imgproc.line(img, closestPoint,p1, new Scalar(255,255,255), 1);
-        
         closestPoint = getClosestPointOnSegment(diag1, p2);
         dist1 += distanceBtwPoints(closestPoint, p2);
         dist1 =  dist1 / 2;
-        
-        
-        //Imgproc.line(img, closestPoint,p2, new Scalar(255,255,255), 1);
-        
-         //Imgproc.line(img, new Point(width, 0),new Point(0, height), new Scalar(0,255,0), 1);
-        
+
         double dist2 = 0;
         closestPoint = getClosestPointOnSegment(diag2, p1);
         dist2 += distanceBtwPoints(closestPoint, p1);
-        
-        //Imgproc.line(img, closestPoint,p1, new Scalar(255,255,255), 1);
         closestPoint = getClosestPointOnSegment(diag2, p2);
         dist2 += distanceBtwPoints(closestPoint, p2);
         dist2 =  dist2 / 2;
-        
-        //Imgproc.line(img, closestPoint,p2, new Scalar(255,255,255), 1);
-        
-        
-       //showImage(mat2BufferedImage(img));
-        
+
         if (dist1 < dist2) {
             return dist1;
         }
@@ -114,7 +96,7 @@ public class DiagonalDominanceAnalyzer {
             double eLine = calcSumOfLines();
             double sum = 0;
             for (Line line : diagonalLineList) {
-                sum = sum +  (line.getLength() * Math.exp((-1 * Math.pow(minDistToThirdLines(line), 2)) / (2 * 0.17)));
+                sum = sum +  (line.getLength() * Math.exp((-1 * Math.pow(minDistToDiagonal(line), 2)) / (2 * 0.17)));
             }
             System.out.println("ediagline: " + 1/eLine * sum);
             return (1/eLine * sum);
@@ -217,8 +199,8 @@ public class DiagonalDominanceAnalyzer {
     }
     
     private boolean isPointInFrame(Point p) {
-        if (p.x >= frameX-1 && p.x <= frameWidth+1 &&
-                p.y >= frameY-1 && p.y <= frameHeight+1) {
+        if (p.x >= frameX-1 && p.x <= frameX+frameWidth+1 &&
+                p.y >= frameY-1 && p.y <= frameY+frameHeight+1) {
             return true;
         }
         return false;

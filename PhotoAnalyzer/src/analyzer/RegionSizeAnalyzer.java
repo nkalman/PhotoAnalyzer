@@ -105,7 +105,7 @@ public class RegionSizeAnalyzer {
     }
     
     private Rect intersection(Rect r2) {
-        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameWidth+1, frameHeight+1);
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameX+frameWidth+1, frameY+frameHeight+1);
         Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
         
         Rectangle intersect = awtRect1.intersection(awtRect2);

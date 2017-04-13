@@ -63,7 +63,7 @@ public class VisualBalanceAnalyzer {
     public Point getImgCenter() {
         int width = frameWidth - 1;
         int height = frameHeight - 1;
-        return new Point(width / 2, height / 2);
+        return new Point(frameX + width / 2, frameY + height / 2);
     }
     
     public Point getAllRegionsCenter() {
@@ -109,7 +109,7 @@ public class VisualBalanceAnalyzer {
     }
     
     private Rect intersection(Rect r2) {
-        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameWidth+1, frameHeight+1);
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameX + frameWidth+1, frameY + frameHeight+1);
         Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
         
         Rectangle intersect = awtRect1.intersection(awtRect2);
