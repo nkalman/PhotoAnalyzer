@@ -206,51 +206,48 @@ public class DiagonalDominanceAnalyzer {
         return false;
     }
     
-    private Line getLineSegmentInFrame(Line originalLine) {
+   private Line getLineSegmentInFrame(Line originalLine) {
         ArrayList<Point> points = new ArrayList();
         Point intersect;
         int nullNr = 0;
-        for (Line frameLine : frameLines) {
-            intersect = intersPointOfTwoLines(originalLine, frameLine);
-            
+        
+        for (Line line : frameLines) {
+            //System.out.println("-----------");
+            intersect = intersPointOfTwoLines(line, originalLine);
             if (intersect != null) {
                 if (isPointOnLine(intersect, originalLine)) {
                     if (intersect.x == 0 && intersect.y == 0 && nullNr == 0) {
-                        //System.out.println(intersect.x + " " + intersect.y);
                         points.add(intersect);
                         nullNr++;
                     }
                     else if (intersect.x == 0 && intersect.y == 0) {
-                        //System.out.println("Meg 1 nulla de nem adom hozza");
                     }
                     else {
-                        //System.out.println(intersect.x + " " + intersect.y);
                         points.add(intersect);
                     }
                 }
             }
-        }
-        //System.out.println(points.size());
-        
-        if (points.size() == 2) {
-            if (isPointOnLine(new Point(points.get(0).x, points.get(0).y), originalLine) &&
-                    isPointOnLine(new Point(points.get(1).x, points.get(1).y), originalLine)) {
+            
+            if (points.size() == 0) {
+                Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
+                Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
+                if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
+                    return originalLine;
+                }
+            }
+            else if (points.size() == 1) {
+                Point inters = points.get(0);
+                Point second = new Point(originalLine.getX1(), originalLine.getY1());
+                if (!isPointInFrame(second)) {
+                    second = new Point(originalLine.getX2(), originalLine.getY2());
+                }
+                return new Line(inters.x, inters.y, second.x, second.y);
+            }
+            else if (isPointInFrame(points.get(0)) && isPointInFrame(points.get(1))){
                 return new Line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
             }
         }
-        else if (points.size() == 1) {
-            Point secondPoint = new Point(originalLine.getX1(), originalLine.getY1());
-            if (!isPointInFrame(secondPoint)) {
-                secondPoint = new Point(originalLine.getX2(), originalLine.getY2());
-            }
-            return new Line(points.get(0).x, points.get(0).y, secondPoint.x, secondPoint.y);
-        }
-        Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
-        Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
-        if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
-            return originalLine;
-        }
-        System.out.println("nil eset");
+        //System.out.println("BAAAD");
         return null;
     }
     
@@ -268,7 +265,7 @@ public class DiagonalDominanceAnalyzer {
         List<Line> actualLines = new ArrayList();
         for (Line line : diagonalLineList) {
             Line lineInFrame = getLineSegmentInFrame(line);
-            if (line != null) {
+            if (lineInFrame != null) {
                 actualLines.add(lineInFrame);
             }
         }

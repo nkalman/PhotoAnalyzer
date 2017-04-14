@@ -52,10 +52,13 @@ public class Analyzer {
         lineDetector = new LineDetector(fileName);
         img = objectDetector.getImg();
         
-        x = 0;
-        y = 0;
-        width = img.width();
-        height = img.height();
+        x = 96;
+        y = 65;
+        width = 204;
+        height = 101;
+        
+        System.out.println("w  " + img.width());
+        System.out.println("h  " + img.height());
         
         showImage(mat2BufferedImage(img));
         

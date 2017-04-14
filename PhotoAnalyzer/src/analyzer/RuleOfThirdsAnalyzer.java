@@ -18,6 +18,8 @@ import linedetection.Line;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 /**
  *
@@ -166,9 +168,17 @@ public class RuleOfThirdsAnalyzer {
     
     private double calcSumOfLines() {
         double sumOfLines = 0;
-        for (Line line : lineList) {
-            sumOfLines += line.getLength();
+        //Imgproc.rectangle(img, new Point(frameX, frameY), new Point(frameX+frameWidth,frameY+frameHeight), new Scalar(250,250,0));
+        //showImage(mat2BufferedImage(img));
+        if (lineList.size() > 0) {
+            for (Line line : lineList) {
+                //System.out.println(line.getX1() + " " + line.getY1() + " " + line.getX2() + " " +line.getY2());
+                //Imgproc.line(img, new Point(line.getX1(),line.getY1()), new Point(line.getX2(),line.getY2()), new Scalar(250,0,0));
+                //showImage(mat2BufferedImage(img));
+                sumOfLines += line.getLength();
+            }
         }
+        
         return sumOfLines;
     }
     
@@ -271,13 +281,13 @@ public class RuleOfThirdsAnalyzer {
     
     private void calculateFrameLines() {
         frameLines = new ArrayList();
-        Line line = new Line(frameX, frameY, frameX+frameWidth-1, frameY);
+        Line line = new Line(frameX, frameY, frameX+frameWidth, frameY);
         frameLines.add(line);
-        line = new Line(frameX, frameY, frameX, frameY+frameHeight-1);
+        line = new Line(frameX, frameY, frameX, frameY+frameHeight);
         frameLines.add(line);
-        line = new Line(frameX+frameWidth-1, frameY, frameX+frameWidth-1, frameY+frameHeight-1);
+        line = new Line(frameX+frameWidth, frameY, frameX+frameWidth, frameY+frameHeight);
         frameLines.add(line);
-        line = new Line(frameX, frameY+frameHeight-1, frameX+frameWidth-1, frameY+frameHeight-1);
+        line = new Line(frameX, frameY+frameHeight, frameX+frameWidth, frameY+frameHeight);
         frameLines.add(line);
     }
     
@@ -289,13 +299,59 @@ public class RuleOfThirdsAnalyzer {
         return false;
     }
     
+//    private Line getLineSegmentInFrame(Line originalLine) {
+//        ArrayList<Point> points = new ArrayList();
+//        Point intersect;
+//        int nullNr = 0;
+//        for (Line frameLine : frameLines) {
+//            intersect = intersPointOfTwoLines(originalLine, frameLine);
+//            
+//            if (intersect != null) {
+//                if (isPointOnLine(intersect, originalLine)) {
+//                    if (intersect.x == 0 && intersect.y == 0 && nullNr == 0) {
+//                        points.add(intersect);
+//                        nullNr++;
+//                    }
+//                    else if (intersect.x == 0 && intersect.y == 0) {
+//                    }
+//                    else {
+//                        points.add(intersect);
+//                    }
+//                }
+//            }
+//        }
+//        
+//        if (points.size() == 2) {
+//            if (isPointOnLine(new Point(points.get(0).x, points.get(0).y), originalLine) &&
+//                    isPointOnLine(new Point(points.get(1).x, points.get(1).y), originalLine)) {
+//                return new Line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
+//            }
+//        }
+//        else if (points.size() == 1) {
+//            Point secondPoint = new Point(originalLine.getX1(), originalLine.getY1());
+//            if (!isPointInFrame(secondPoint)) {
+//                secondPoint = new Point(originalLine.getX2(), originalLine.getY2());
+//            }
+//            return new Line(points.get(0).x, points.get(0).y, secondPoint.x, secondPoint.y);
+//        }
+//        Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
+//        Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
+//        if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
+//            return originalLine;
+//        }
+//        System.out.println("baaj " + originalLine.getX1() + " " + originalLine.getY1() + " " + originalLine.getX2() + " " +originalLine.getY2());
+//        System.out.println("nil eset");
+//        return null;
+//    }
+    
     private Line getLineSegmentInFrame(Line originalLine) {
         ArrayList<Point> points = new ArrayList();
         Point intersect;
         int nullNr = 0;
-        for (Line frameLine : frameLines) {
-            intersect = intersPointOfTwoLines(originalLine, frameLine);
-            
+        
+        for (Line line : frameLines) {
+            //System.out.println("-----------");
+            intersect = intersPointOfTwoLines(line, originalLine);
             if (intersect != null) {
                 if (isPointOnLine(intersect, originalLine)) {
                     if (intersect.x == 0 && intersect.y == 0 && nullNr == 0) {
@@ -309,27 +365,27 @@ public class RuleOfThirdsAnalyzer {
                     }
                 }
             }
-        }
-        
-        if (points.size() == 2) {
-            if (isPointOnLine(new Point(points.get(0).x, points.get(0).y), originalLine) &&
-                    isPointOnLine(new Point(points.get(1).x, points.get(1).y), originalLine)) {
+            
+            if (points.size() == 0) {
+                Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
+                Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
+                if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
+                    return originalLine;
+                }
+            }
+            else if (points.size() == 1) {
+                Point inters = points.get(0);
+                Point second = new Point(originalLine.getX1(), originalLine.getY1());
+                if (!isPointInFrame(second)) {
+                    second = new Point(originalLine.getX2(), originalLine.getY2());
+                }
+                return new Line(inters.x, inters.y, second.x, second.y);
+            }
+            else if (isPointInFrame(points.get(0)) && isPointInFrame(points.get(1))){
                 return new Line(points.get(0).x, points.get(0).y, points.get(1).x, points.get(1).y);
             }
         }
-        else if (points.size() == 1) {
-            Point secondPoint = new Point(originalLine.getX1(), originalLine.getY1());
-            if (!isPointInFrame(secondPoint)) {
-                secondPoint = new Point(originalLine.getX2(), originalLine.getY2());
-            }
-            return new Line(points.get(0).x, points.get(0).y, secondPoint.x, secondPoint.y);
-        }
-        Point startPoint = new Point(originalLine.getX1(), originalLine.getY1());
-        Point endPoint = new Point(originalLine.getX2(), originalLine.getY2());
-        if (isPointInFrame(startPoint) && isPointInFrame(endPoint)) {
-            return originalLine;
-        }
-        System.out.println("nil eset");
+        //System.out.println("BAAAD");
         return null;
     }
     
@@ -347,7 +403,7 @@ public class RuleOfThirdsAnalyzer {
         List<Line> actualLines = new ArrayList();
         for (Line line : lineList) {
             Line lineInFrame = getLineSegmentInFrame(line);
-            if (line != null) {
+            if (lineInFrame != null) {
                 actualLines.add(lineInFrame);
             }
         }
@@ -359,8 +415,8 @@ public class RuleOfThirdsAnalyzer {
         Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
         
         Rectangle intersect = awtRect1.intersection(awtRect2);
-        System.out.println(r2.x + " " + r2.y + " " + r2.width + " " + r2.height);
-        System.out.println(intersect.x + " " + intersect.y + " " + intersect.width + " " + intersect.height);
+        //System.out.println(r2.x + " " + r2.y + " " + r2.width + " " + r2.height);
+        //System.out.println(intersect.x + " " + intersect.y + " " + intersect.width + " " + intersect.height);
         if (intersect.width > 0 && intersect.height > 0) {
             return new Rect(intersect.x, intersect.y, intersect.width, intersect.height);
         }
