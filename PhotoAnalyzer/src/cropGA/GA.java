@@ -10,5 +10,5 @@ package cropGA;
  * @author Nomi
  */
 public class GA {
-    
+
 }

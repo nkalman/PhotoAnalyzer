@@ -7,7 +7,10 @@ package analyzer;
 
 
 
+import cropGA.Individual;
 import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 
 /**
  *
@@ -18,9 +21,27 @@ public class Application {
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         String filename = "D:\\1Downloads\\Firefox downloads\\tree.jpg";
+        Mat img;
+        img = Imgcodecs.imread(filename);
+        int width = img.width();
+        int height = img.height();
+        System.out.println("w= " + width + "  h= " + height);
+        
+        Individual ind = new Individual();
+        ind.generateIndividual(width, height);
+        
+        
+        
+        
+        
+//INNENTOL
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        String filename = "D:\\1Downloads\\Firefox downloads\\tree.jpg";
+//
+//        Analyzer analyzer = new Analyzer(filename);
+//        System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
 
-        Analyzer analyzer = new Analyzer(filename);
-        System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
+//IDAIG KELL MAJD!!!!!
         
         
         
