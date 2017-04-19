@@ -5,6 +5,7 @@
  */
 package cropGA;
 
+import analyzer.Analyzer;
 import java.util.Random;
 
 /**
@@ -19,7 +20,12 @@ public class Individual {
     private double height;
     
     
-    private int aestheticScore = 0;
+    private double aestheticScore = 0;
+    private Analyzer analyzer;
+    
+    public Individual(Analyzer an) {
+        analyzer = an;
+    }
 
     // Create a random individual
     public void generateIndividual(int originalWidth, int originalHeight) {
@@ -41,13 +47,21 @@ public class Individual {
         while (width + x > originalWidth || height + y > originalHeight) {
             rand = new Random();
             width = rand.nextInt(originalWidth - originalWidth/2 + 1) + originalWidth/2;
-            height = rand.nextInt(originalHeight - originalHeight/2 + 1) + originalHeight/2;
+                height = rand.nextInt(originalHeight - originalHeight/2 + 1) + originalHeight/2;
             //height = frameRatio * width;
         }
         //System.out.println("w1= " + width + "  h1= " + height);
         
         //height = (int)height;
     }
+    
+    public void generateFirstIndividual(int originalWidth, int originalHeight) {
+        x = 0;
+        y = 0;
+        width = originalWidth;
+        height = originalHeight;
+    }
+    
 
     /* Getters and setters */
     public double getX() {
@@ -82,10 +96,11 @@ public class Individual {
         this.height = height;
     }
 
-    public int getAestheticScore() {
-//        if (aestheticScore == 0) {
-//            aestheticScore = FitnessCalc.getAestheticScore(this);
-//        }
+    public double getAestheticScore() {
+        if (aestheticScore == 0) {
+            analyzer.setFrame((int)x, (int)y, (int)width, (int)height);
+            aestheticScore = analyzer.calcCombinedAestheticScore();
+        }
         return aestheticScore;
     }
 

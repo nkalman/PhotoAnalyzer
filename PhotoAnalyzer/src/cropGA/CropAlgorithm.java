@@ -5,6 +5,7 @@
  */
 package cropGA;
 
+import analyzer.Analyzer;
 import java.util.Random;
 
 /**
@@ -20,14 +21,20 @@ public class CropAlgorithm {
     
     private int originalWidth;
     private int originalHeight;
+    
+    private Analyzer analyzer;
 
     /* Public methods */
+    
+    public CropAlgorithm(Analyzer an) {
+        analyzer = an;
+    }
     
     // Evolve a population
     public Population evolvePopulation(Population pop, int width, int height) {
         originalWidth = width;
         originalHeight = height;
-        Population newPopulation = new Population(pop.size(), false, width, height);
+        Population newPopulation = new Population(pop.size(), false, width, height, analyzer);
 
         // Keep our best individual
         if (elitism) {
@@ -60,7 +67,7 @@ public class CropAlgorithm {
 
     // Crossover individuals
     private Individual crossover(Individual indiv1, Individual indiv2) {
-        Individual newSol = new Individual();
+        Individual newSol = new Individual(analyzer);
         // Set geneX
         if (Math.random() <= uniformRate) {
             newSol.setX(indiv1.getX());
@@ -134,7 +141,7 @@ public class CropAlgorithm {
     // Select individuals for crossover
     private Individual tournamentSelection(Population pop) {
         // Create a tournament population
-        Population tournament = new Population(tournamentSize, false, originalWidth, originalHeight);
+        Population tournament = new Population(tournamentSize, false, originalWidth, originalHeight, analyzer);
         // For each place in the tournament get a random individual
         for (int i = 0; i < tournamentSize; i++) {
             int randomId = (int) (Math.random() * pop.size());

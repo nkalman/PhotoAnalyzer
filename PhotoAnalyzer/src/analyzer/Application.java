@@ -7,7 +7,9 @@ package analyzer;
 
 
 
+import cropGA.CropAlgorithm;
 import cropGA.Individual;
+import cropGA.Population;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -20,18 +22,36 @@ public class Application {
     
     public static void main(String[] args) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String filename = "D:\\1Downloads\\Firefox downloads\\tree.jpg";
+        String filename = "D:\\1Downloads\\Firefox downloads\\stock.jpg";
         Mat img;
         img = Imgcodecs.imread(filename);
         int width = img.width();
         int height = img.height();
         System.out.println("w= " + width + "  h= " + height);
         
-        Individual ind = new Individual();
+        Analyzer analyzer = new Analyzer(filename);
+        analyzer.setFrame(0, 0, width, height);
+        
+        Individual ind = new Individual(analyzer);
         ind.generateIndividual(width, height);
+        System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
         
+        Population myPop = new Population(50, true, width, height, analyzer);
         
-        
+        int generationCount = 0;
+        while (generationCount < 100) {
+            generationCount++;
+            System.out.println("Generation: " + generationCount + " Fittest: " + myPop.getFittest().getAestheticScore());
+            //myPop = CropAlgorithm.evolvePopulation(myPop);
+            CropAlgorithm cropAlg = new CropAlgorithm(analyzer);
+            myPop = cropAlg.evolvePopulation(myPop, width, height);
+            System.out.println("-------------------------------------------------ACTUAL BEST:  " + myPop.getFittest().getAestheticScore());
+        }
+        System.out.println("Solution found!");
+        System.out.println("Generation: " + generationCount);
+        System.out.println("Genes:");
+        System.out.println(myPop.getFittest());
+        System.out.println(myPop.getFittest().getAestheticScore());
         
         
 //INNENTOL

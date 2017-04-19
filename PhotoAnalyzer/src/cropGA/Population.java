@@ -5,6 +5,8 @@
  */
 package cropGA;
 
+import analyzer.Analyzer;
+
 /**
  *
  * @author Nomi
@@ -12,19 +14,24 @@ package cropGA;
 public class Population {
     Individual[] individuals;
     
+    private Analyzer analyzer;
     
 
     /*
      * Constructors
      */
     // Create a population
-    public Population(int populationSize, boolean initialise, int width, int height) {
+    public Population(int populationSize, boolean initialise, int width, int height, Analyzer an) {
+        analyzer = an;
         individuals = new Individual[populationSize];
         // Initialise population
         if (initialise) {
             // Loop and create individuals
-            for (int i = 0; i < size(); i++) {
-                Individual newIndividual = new Individual();
+            Individual newIndividual = new Individual(analyzer);
+            newIndividual.generateFirstIndividual(width, height);
+            saveIndividual(0, newIndividual);
+            for (int i = 1; i < size(); i++) {
+                newIndividual = new Individual(analyzer);
                 newIndividual.generateIndividual(width, height);
                 saveIndividual(i, newIndividual);
             }
