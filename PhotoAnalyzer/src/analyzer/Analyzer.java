@@ -86,18 +86,14 @@ public class Analyzer {
     public double calcCombinedAestheticScore() {
         double wSZ = 0.08;
         
-        long startTime = System.currentTimeMillis();
         double aestheticScore = 0;
         double regionsSizeScore = 0;
-        //for (int i = 0; i < 20000; ++i) {   
-            aestheticScoreCalculator.setFrame(x, y, width, height);
-            aestheticScore = aestheticScoreCalculator.calcAestheticScore();
-            regionSizeAnalyzer.setFrame(x, y, width, height);
-            regionsSizeScore = regionSizeAnalyzer.calcRegionSize();
-        //}
+        aestheticScoreCalculator.setFrame(x, y, width, height);
+        aestheticScore = aestheticScoreCalculator.calcAestheticScore();
+        regionSizeAnalyzer.setFrame(x, y, width, height);
+        regionsSizeScore = regionSizeAnalyzer.calcRegionSize();
         
-        long estimatedTime = System.currentTimeMillis() - startTime;
-        System.out.println("IDOOO==== " + estimatedTime );
+        System.out.println("aktualis eredmeny==== " + ((1-wSZ) * aestheticScore + wSZ * regionsSizeScore) );
         return ((1-wSZ) * aestheticScore + wSZ * regionsSizeScore);
         
 

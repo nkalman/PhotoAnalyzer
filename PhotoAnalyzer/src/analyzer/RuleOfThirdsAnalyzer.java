@@ -120,7 +120,7 @@ public class RuleOfThirdsAnalyzer {
             for (Rect rect : faceList) {
                 sum = sum +  ((rect.area()+ weight) * Math.exp((-1 * Math.pow(minDistToPowerPoints(rect), 2)) / (2 * 0.17)));
             }
-            System.out.println("\n" + "epoint: " + 1/ePoint * sum);
+            //System.out.println("\n" + "epoint: " + 1/ePoint * sum);
             return (1/ePoint * sum);
         }
         else {
@@ -189,7 +189,7 @@ public class RuleOfThirdsAnalyzer {
             for (Line line : lineList) {
                 sum = sum +  (line.getLength() * Math.exp((-1 * Math.pow(minDistToThirdLines(line), 2)) / (2 * 0.17)));
             }
-            System.out.println("eline: " + 1/eLine * sum);
+            //System.out.println("eline: " + 1/eLine * sum);
             return (1/eLine * sum);
         }
         else {

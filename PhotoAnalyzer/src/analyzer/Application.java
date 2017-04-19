@@ -12,6 +12,7 @@ import cropGA.Individual;
 import cropGA.Population;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
 /**
@@ -36,10 +37,12 @@ public class Application {
         ind.generateIndividual(width, height);
         System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
         
-        Population myPop = new Population(50, true, width, height, analyzer);
+        Population myPop = new Population(100, true, width, height, analyzer);
+        
+        long startTime = System.currentTimeMillis();
         
         int generationCount = 0;
-        while (generationCount < 100) {
+        while (generationCount < 500) {
             generationCount++;
             System.out.println("Generation: " + generationCount + " Fittest: " + myPop.getFittest().getAestheticScore());
             //myPop = CropAlgorithm.evolvePopulation(myPop);
@@ -50,45 +53,17 @@ public class Application {
         System.out.println("Solution found!");
         System.out.println("Generation: " + generationCount);
         System.out.println("Genes:");
-        System.out.println(myPop.getFittest());
-        System.out.println(myPop.getFittest().getAestheticScore());
+        Individual fittest =  myPop.getFittest();
+        System.out.println(fittest);
+        System.out.println(fittest.getAestheticScore());
         
+        Rect roi = new Rect((int)fittest.getX(), (int)fittest.getY(),
+                (int)fittest.getWidth(), (int)fittest.getHeight());
+        Mat cropped = new Mat(img, roi);
+        Imgcodecs.imwrite("D:\\1Downloads\\Firefox downloads\\cropped1.png",cropped);
         
-//INNENTOL
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        String filename = "D:\\1Downloads\\Firefox downloads\\tree.jpg";
-//
-//        Analyzer analyzer = new Analyzer(filename);
-//        System.out.println("\n\nTHE RESULT: " + analyzer.calcCombinedAestheticScore());
-
-//IDAIG KELL MAJD!!!!!
-        
-        
-        
-//        String filePath = "D:\\1Downloads\\Firefox downloads\\man22.jpg";
-//        System.out.println("Sending file: " + filePath);
-//         
-//        try {
-//            File file = new File(filePath);
-//            FileInputStream fis = new FileInputStream(file);
-//            BufferedInputStream inputStream = new BufferedInputStream(fis);
-//            byte[] fileBytes = new byte[(int) file.length()];
-//            inputStream.read(fileBytes);
-//            inputStream.close();
-//             
-//            System.out.println(fileBytes);
-//            
-//            String filePath2 = "D:\\1Downloads\\Firefox downloads\\man222.jpg";
-//            FileOutputStream fos = new FileOutputStream(filePath2);
-//            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
-//            outputStream.write(fileBytes);
-//            outputStream.close();
-//             
-//            System.out.println("Received file: " + filePath2);
-//        } catch (IOException ex) {
-//            System.err.println(ex);
-//            throw new WebServiceException(ex);
-//        } 
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        System.out.println("IDOOO==== " + estimatedTime );
         
         
     }

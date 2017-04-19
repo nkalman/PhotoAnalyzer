@@ -48,9 +48,9 @@ public class AestheticScoreCalculator {
         double wDD = 0.3;
         double wVB = 1;
         
-        System.out.println("RULE OF THIRDS: " + rtValue);
-        System.out.println("DIAGONAL DOMINANCE: " + ddValue);
-        System.out.println("VISUAL BALANCE: " + vbValue);
+//        System.out.println("RULE OF THIRDS: " + rtValue);
+//        System.out.println("DIAGONAL DOMINANCE: " + ddValue);
+//        System.out.println("VISUAL BALANCE: " + vbValue);
         
         
         return (wRT* rtValue + wDD*ddValue + wVB * vbValue) / (wRT + wDD + wVB);
